@@ -1,5 +1,6 @@
 package com.example.zenithpaw.roomdatabase.user
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -8,6 +9,7 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface UserInventoryItemDao {
     @Insert(onConflict = ABORT)
     suspend fun insertUserInventoryItem(userInventoryItem: UserInventoryItem)
@@ -26,6 +28,6 @@ interface UserInventoryItemDao {
     suspend fun getUserInventoryItemById(inventoryItemId: String): UserInventoryItem
 
     @Query("SELECT * FROM user_inventory_item WHERE userId = :userId")
-    suspend fun getUserInventoryItemsByUserId(userId: String): Flow<List<UserInventoryItem>>
+    fun getUserInventoryItemsByUserId(userId: String): Flow<List<UserInventoryItem>>
 }
 

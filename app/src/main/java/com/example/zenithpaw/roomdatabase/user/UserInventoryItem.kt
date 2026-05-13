@@ -2,6 +2,7 @@ package com.example.zenithpaw.roomdatabase.user
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import com.example.zenithpaw.roomdatabase.shop.ShopItem
 
 @Entity(tableName = "user_inventory_item", foreignKeys = [
@@ -19,6 +20,7 @@ import com.example.zenithpaw.roomdatabase.shop.ShopItem
     )
 ])
 data class UserInventoryItem(
+    @PrimaryKey(autoGenerate = false)
     val inventoryItemId: String,
     val userId: String, // Foreign key to the User entity
     val shopItemId: String, // Foreign key to the ShopItem entity

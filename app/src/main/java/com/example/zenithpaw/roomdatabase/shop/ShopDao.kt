@@ -26,7 +26,7 @@ interface ShopDao {
     suspend fun updateShop(shop: Shop): Int
 
     @Query("SELECT * FROM shops WHERE shopId = :shopId")
-    suspend fun getShopById(shopId: String): Shop?
+    suspend fun getShopById(shopId: String): Shop
 
     @Query("SELECT * FROM shops")
     fun getShops(): Flow<List<Shop>>

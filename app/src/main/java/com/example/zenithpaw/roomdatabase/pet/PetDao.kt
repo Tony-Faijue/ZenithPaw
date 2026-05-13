@@ -1,5 +1,6 @@
 package com.example.zenithpaw.roomdatabase.pet
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,6 +10,7 @@ import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface PetDao {
     //Create new pet
     @Insert(onConflict = ABORT)

@@ -1,5 +1,6 @@
 package com.example.zenithpaw.roomdatabase.shop
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -7,6 +8,7 @@ import androidx.room.OnConflictStrategy.Companion.ABORT
 import androidx.room.Query
 import androidx.room.Update
 
+@Dao
 interface ShopItemDao {
     @Insert(onConflict = ABORT)
     suspend fun insertShopItem(shopItem: ShopItem)

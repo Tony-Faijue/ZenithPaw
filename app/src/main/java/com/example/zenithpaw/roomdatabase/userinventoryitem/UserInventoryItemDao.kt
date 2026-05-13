@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.user
+package com.example.zenithpaw.roomdatabase.userinventoryitem
 
 import androidx.room.Dao
 import androidx.room.Delete

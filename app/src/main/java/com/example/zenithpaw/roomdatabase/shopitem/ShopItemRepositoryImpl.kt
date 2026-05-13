@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.shop
+package com.example.zenithpaw.roomdatabase.shopitem
 
 class ShopItemRepositoryImpl(private val shopItemDao: ShopItemDao) : ShopItemRepository {
     override suspend fun insertShopItem(shopItem: ShopItem) {

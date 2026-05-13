@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.user
+package com.example.zenithpaw.roomdatabase.userinventoryitem
 
 import kotlinx.coroutines.flow.Flow
 

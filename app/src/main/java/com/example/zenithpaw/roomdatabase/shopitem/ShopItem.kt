@@ -1,8 +1,9 @@
-package com.example.zenithpaw.roomdatabase.shop
+package com.example.zenithpaw.roomdatabase.shopitem
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.zenithpaw.roomdatabase.shop.Shop
 import java.util.UUID
 
 @Entity(tableName = "shop_items", foreignKeys = [

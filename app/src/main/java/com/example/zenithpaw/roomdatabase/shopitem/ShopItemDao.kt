@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.shop
+package com.example.zenithpaw.roomdatabase.shopitem
 
 import androidx.room.Dao
 import androidx.room.Delete

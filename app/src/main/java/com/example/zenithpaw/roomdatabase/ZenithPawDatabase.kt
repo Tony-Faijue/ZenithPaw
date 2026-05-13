@@ -6,14 +6,14 @@ import com.example.zenithpaw.roomdatabase.pet.Pet
 import com.example.zenithpaw.roomdatabase.pet.PetDao
 import com.example.zenithpaw.roomdatabase.shop.Shop
 import com.example.zenithpaw.roomdatabase.shop.ShopDao
-import com.example.zenithpaw.roomdatabase.shop.ShopItem
-import com.example.zenithpaw.roomdatabase.shop.ShopItemDao
+import com.example.zenithpaw.roomdatabase.shopitem.ShopItem
+import com.example.zenithpaw.roomdatabase.shopitem.ShopItemDao
 import com.example.zenithpaw.roomdatabase.task.Task
 import com.example.zenithpaw.roomdatabase.task.TaskDao
 import com.example.zenithpaw.roomdatabase.user.User
 import com.example.zenithpaw.roomdatabase.user.UserDao
-import com.example.zenithpaw.roomdatabase.user.UserInventoryItem
-import com.example.zenithpaw.roomdatabase.user.UserInventoryItemDao
+import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItem
+import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemDao
 
 @Database(
     entities = [User::class, Pet::class, Task::class, Shop::class, ShopItem::class, UserInventoryItem::class],

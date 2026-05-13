@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.shop
+package com.example.zenithpaw.roomdatabase.shopitem
 
 interface ShopItemRepository {
     suspend fun insertShopItem(shopItem: ShopItem)

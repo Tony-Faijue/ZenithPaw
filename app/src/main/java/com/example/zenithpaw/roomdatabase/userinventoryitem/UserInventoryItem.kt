@@ -1,9 +1,10 @@
-package com.example.zenithpaw.roomdatabase.user
+package com.example.zenithpaw.roomdatabase.userinventoryitem
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.example.zenithpaw.roomdatabase.shop.ShopItem
+import com.example.zenithpaw.roomdatabase.shopitem.ShopItem
+import com.example.zenithpaw.roomdatabase.user.User
 
 @Entity(tableName = "user_inventory_item", foreignKeys = [
     ForeignKey(

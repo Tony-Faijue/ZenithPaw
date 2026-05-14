@@ -11,13 +11,21 @@ composeBom = "2024.11.00"
 #Room Database & KSP Versions
 room = "2.6.1"
 ksp = "2.1.0-1.0.29"
+#Hilt Version
+hilt = "2.51.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
 #Room Database Libraries
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
+
+#Hilt Libraries
+hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
+hilt-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt"}
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -39,3 +47,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 #Plugin for Room Database & KSP
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 androidx-room = { id = "androidx.room", version.ref = "room"}
+#Plugin for Hilt
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt"}

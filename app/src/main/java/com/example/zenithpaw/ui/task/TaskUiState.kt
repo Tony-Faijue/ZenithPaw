@@ -1,4 +1,6 @@
-package com.example.zenithpaw.roomdatabase.task
+package com.example.zenithpaw.ui.task
+
+import com.example.zenithpaw.roomdatabase.task.TaskState
 
 data class TaskUiState(
     val taskId: String = "",

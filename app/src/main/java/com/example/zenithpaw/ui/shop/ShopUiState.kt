@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.shop
+package com.example.zenithpaw.ui.shop
 
 data class ShopUiState(
     val shopId: String = "",

@@ -1,8 +1,9 @@
 package com.example.zenithpaw.roomdatabase.pet
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PetRepositoryImpl(private val petDao: PetDao) : PetRepository {
+class PetRepositoryImpl @Inject constructor(private val petDao: PetDao) : PetRepository {
     override suspend fun insertPet(pet: Pet) {
         petDao.insertPet(pet)
     }

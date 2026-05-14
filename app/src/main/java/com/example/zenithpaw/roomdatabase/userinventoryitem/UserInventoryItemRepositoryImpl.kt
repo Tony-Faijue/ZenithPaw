@@ -1,8 +1,9 @@
 package com.example.zenithpaw.roomdatabase.userinventoryitem
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class UserInventoryItemRepositoryImpl(private val userInventoryItemDao: UserInventoryItemDao) :
+class UserInventoryItemRepositoryImpl @Inject constructor(private val userInventoryItemDao: UserInventoryItemDao) :
     UserInventoryItemRepository {
         override suspend fun insertUserInventoryItem(userInventoryItem: UserInventoryItem) {
         userInventoryItemDao.insertUserInventoryItem(userInventoryItem)

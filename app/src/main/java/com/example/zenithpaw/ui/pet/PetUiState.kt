@@ -1,4 +1,7 @@
-package com.example.zenithpaw.roomdatabase.pet
+package com.example.zenithpaw.ui.pet
+
+import com.example.zenithpaw.roomdatabase.pet.PetState
+import com.example.zenithpaw.roomdatabase.pet.PetType
 
 data class PetUiState(
     val petId: String = "",

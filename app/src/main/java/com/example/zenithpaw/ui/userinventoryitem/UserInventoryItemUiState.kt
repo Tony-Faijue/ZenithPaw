@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.userinventoryitem
+package com.example.zenithpaw.ui.userinventoryitem
 
 data class UserInventoryItemUiState(
     val inventoryItemId: String = "",

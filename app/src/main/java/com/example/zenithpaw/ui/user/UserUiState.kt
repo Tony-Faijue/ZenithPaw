@@ -1,4 +1,4 @@
-package com.example.zenithpaw.roomdatabase.user
+package com.example.zenithpaw.ui.user
 
 data class UserUiState(
     val userId: String = "",

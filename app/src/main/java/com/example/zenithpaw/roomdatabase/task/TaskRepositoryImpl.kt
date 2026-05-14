@@ -1,8 +1,9 @@
 package com.example.zenithpaw.roomdatabase.task
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class TaskRepositoryImpl(private val taskDao: TaskDao) : TaskRepository {
+class TaskRepositoryImpl @Inject constructor(private val taskDao: TaskDao) : TaskRepository {
     override suspend fun insertTask(task: Task) {
         taskDao.insertTask(task)
     }

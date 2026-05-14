@@ -1,6 +1,8 @@
 package com.example.zenithpaw.roomdatabase.shopitem
 
-class ShopItemRepositoryImpl(private val shopItemDao: ShopItemDao) : ShopItemRepository {
+import javax.inject.Inject
+
+class ShopItemRepositoryImpl @Inject constructor(private val shopItemDao: ShopItemDao) : ShopItemRepository {
     override suspend fun insertShopItem(shopItem: ShopItem) {
         shopItemDao.insertShopItem(shopItem)
     }

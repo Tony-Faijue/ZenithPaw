@@ -1,5 +1,6 @@
 package com.example.zenithpaw.roomdatabase.shopitem
 
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ShopItemRepositoryImpl @Inject constructor(private val shopItemDao: ShopItemDao) : ShopItemRepository {
@@ -17,5 +18,8 @@ class ShopItemRepositoryImpl @Inject constructor(private val shopItemDao: ShopIt
         }
     override suspend fun getShopItemById(shopItemId: String): ShopItem {
         return shopItemDao.getShopItemById(shopItemId)
+    }
+    override fun getShopItems(): Flow<List<ShopItem>> {
+        return shopItemDao.getShopItems()
     }
 }

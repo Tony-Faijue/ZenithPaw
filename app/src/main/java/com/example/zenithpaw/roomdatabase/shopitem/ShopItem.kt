@@ -20,6 +20,6 @@ data class ShopItem(
     val price: Int,
     val description: String,
     @PrimaryKey(autoGenerate = false)
-    val shopItemId: String = UUID.randomUUID().toString(),
+    val shopItemId: String,
     val shopId: String // Foreign key to the Shop entity
 )

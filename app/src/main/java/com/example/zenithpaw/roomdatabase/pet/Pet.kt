@@ -23,6 +23,6 @@ data class Pet (
     val zen: Int,
     val petState: PetState,
     @PrimaryKey(autoGenerate = false)
-    val petId: String = UUID.randomUUID().toString(),
+    val petId: String,
     val userId: String // Foreign key to the User entity
 )

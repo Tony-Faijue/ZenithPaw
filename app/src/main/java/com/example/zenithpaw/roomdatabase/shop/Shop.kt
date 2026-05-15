@@ -8,5 +8,5 @@ import java.util.UUID
 data class Shop(
     val name: String,
     @PrimaryKey(autoGenerate = false)
-    val shopId: String = UUID.randomUUID().toString()
+    val shopId: String
 )

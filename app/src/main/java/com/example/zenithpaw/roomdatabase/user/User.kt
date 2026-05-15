@@ -12,5 +12,5 @@ data class User (
     val lastLogin: Long,
     val gold: Int,
     @PrimaryKey(autoGenerate = false)
-    val userId: String = UUID.randomUUID().toString()
+    val userId: String
 )

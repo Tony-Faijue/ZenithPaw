@@ -21,5 +21,5 @@ data class Task (
     val taskState: TaskState,
     val userId: String, //Foreign key to the User entity
     @PrimaryKey(autoGenerate = false)
-    val taskId: String = UUID.randomUUID().toString()
+    val taskId: String
 )

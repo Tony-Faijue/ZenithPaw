@@ -2,10 +2,10 @@ package com.example.zenithpaw.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.zenithpaw.roomdatabase.shopitem.ShopItemDao
+import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
 import com.example.zenithpaw.roomdatabase.user.User
-import com.example.zenithpaw.roomdatabase.user.UserDao
-import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemDao
+import com.example.zenithpaw.roomdatabase.user.UserRepository
+import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
 import com.example.zenithpaw.ui.uievents.UserUiEvent
 import com.example.zenithpaw.ui.user.UserUiState
 import com.example.zenithpaw.ui.user.toEntity
@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -22,9 +24,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userDao: UserDao,
-    private val userInventoryItemDao: UserInventoryItemDao,
-    private val shopItemDao: ShopItemDao,
+    // Inject the interface repositories
+    private val userRepository: UserRepository,
+    private val userInventoryItemRepository: UserInventoryItemRepository,
+    private val shopItemRepository: ShopItemRepository,
 ): ViewModel() {
     //Single source of truth for UI state
     private val _uiState = MutableStateFlow(UserUiState(isLoading = true)) //loading user state first
@@ -43,13 +46,19 @@ class UserViewModel @Inject constructor(
     private fun observeUserData(){
         viewModelScope.launch {
             //1. Observe the users
-            userDao.getUsers().collect { users ->
+            // Use of flatMapLatest to cancel previous flows when changes occur
+            userRepository.getUsers().flatMapLatest { users ->
                 val currentUser = users.firstOrNull()
-                if (currentUser != null){
+                if (currentUser == null){
+                   //No user found
+                    _uiState.update {it.copy(isLoading = false)}
+                    flowOf(Unit) // Emit nothing
+                }
+                else {
                     //2. Observe both the user inventory items for currentUser and shop items
                     combine(
-                        userInventoryItemDao.getUserInventoryItemsByUserId(currentUser.userId),
-                        shopItemDao.getShopItems()
+                        userInventoryItemRepository.getUserInventoryItemsByUserId(currentUser.userId),
+                        shopItemRepository.getShopItems()
                         ) { inventory, shopItems ->
                             //3. Combine the inventory items and shop items
                             val displayItems = inventory.map { inventoryItem ->
@@ -67,22 +76,19 @@ class UserViewModel @Inject constructor(
                             _uiState.update{ currentState ->
                                 currentState.copy(
                                     userId = currentUser.userId,
-                                    name = currentUser.name,
-                                    email = currentUser.email,
-                                    imageUrl = currentUser.imageUrl,
                                     lastLogin = currentUser.lastLogin,
                                     gold = currentUser.gold,
                                     inventory = displayItems,
                                     isLoading = false,
+                                    //Set the text fields to the current user data only if they are blank
+                                    name = currentState.name.ifEmpty { currentUser.name },
+                                    email = currentState.email.ifEmpty { currentUser.email },
+                                    imageUrl = currentState.imageUrl.ifEmpty { currentUser.imageUrl },
                                 )
                             }
-                        }.collect {}
+                        }
                 }
-                else {
-                    //No user found
-                    _uiState.update {it.copy(isLoading = false)}
-                }
-            }
+            }.collect{}
         }
     }
 
@@ -100,11 +106,13 @@ class UserViewModel @Inject constructor(
                 if(_uiState.value.userId.isEmpty()) return
                 //Map each event to the appropriate function
                 when (event){
-                    is UserUiEvent.OnNameChange -> onNameChange(event.name)
-                    is UserUiEvent.OnEmailChange -> onEmailChange(event.email)
-                    is UserUiEvent.OnChangeProfileImage -> onChangeProfileImage(event.imageUrl)
+                    //Update the local UI state with the new data
+                    is UserUiEvent.OnNameChange -> {_uiState.update { it.copy(name = event.name) }}
+                    is UserUiEvent.OnEmailChange -> {_uiState.update { it.copy(email = event.email) }}
+                    is UserUiEvent.OnChangeProfileImage -> {_uiState.update { it.copy(imageUrl = event.imageUrl) }}
 
-                    UserUiEvent.OnSaveProfileClicked -> onSaveProfileClicked()
+                    //Database persistence actions
+                    UserUiEvent.OnSaveProfileClicked -> onSaveProfileClicked() // Will save all the changes for User Data
                     UserUiEvent.OnSyncCloudClicked -> onSyncCloudClicked()
                     UserUiEvent.OnDeleteAccountClicked -> onDeleteAccountClicked()
                     else -> { } //Do nothing
@@ -114,47 +122,14 @@ class UserViewModel @Inject constructor(
     }
 
     /**
-     * Update the user's name in the database
+     * Save the current user data
      */
-    private fun onNameChange(newName: String){
-        viewModelScope.launch {
-            //Get the current state, convert to the Entity and update the property
-            val currentUser = _uiState.value.toEntity().copy(name = newName)
-            //Save to the database
-            userDao.updateUser(currentUser)
-        }
-    }
-
-    /**
-     * Update the user's email in the database
-     */
-    private fun onEmailChange(newEmail: String){
-        viewModelScope.launch {
-            //Get the current state, convert to the Entity and update the property
-            val currentUser = _uiState.value.toEntity().copy(email = newEmail)
-            //Save to the database
-            userDao.updateUser(currentUser)
-        }
-    }
-
-    /**
-     * Update the user's profile image in the database
-     */
-    private fun onChangeProfileImage(newImageUrl: String){
-        viewModelScope.launch {
-            //Get the current state, convert to the Entity and update the property
-            val currentUser = _uiState.value.toEntity().copy(imageUrl = newImageUrl)
-            //Save to the database
-            userDao.updateUser(currentUser)
-        }
-    }
-
     private fun onSaveProfileClicked(){
         viewModelScope.launch {
             //Get the current state, convert to the Entity and update the property
             val currentUser = _uiState.value.toEntity()
             //Save to the database
-            userDao.upsertUser(currentUser)
+            userRepository.upsertUser(currentUser)
         }
     }
 
@@ -173,7 +148,7 @@ class UserViewModel @Inject constructor(
                 gold = 100,
             )
             //Save to the database
-            userDao.upsertUser(newUser)
+            userRepository.upsertUser(newUser)
         }
     }
 
@@ -184,7 +159,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             //Delete the current user
             val currentUser = _uiState.value.toEntity()
-            userDao.deleteUser(currentUser)
+            userRepository.deleteUser(currentUser)
         }
     }
 

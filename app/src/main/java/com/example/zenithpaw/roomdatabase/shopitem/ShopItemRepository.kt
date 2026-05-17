@@ -9,4 +9,5 @@ interface ShopItemRepository {
     suspend fun updateShopItem(shopItem: ShopItem): Int
     suspend fun getShopItemById(shopItemId: String): ShopItem
     fun getShopItems(): Flow<List<ShopItem>>
+    fun getShopItemsByShopId(shopId: String): Flow<List<ShopItem>>
 }

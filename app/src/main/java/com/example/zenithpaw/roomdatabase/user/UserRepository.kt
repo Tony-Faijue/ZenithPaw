@@ -9,5 +9,6 @@ interface UserRepository {
     suspend fun updateUser(user: User): Int
     suspend fun getUserById(userId: String): User?
     fun getUsers(): Flow<List<User>>
+    suspend fun deleteAllUsers()
 }
 

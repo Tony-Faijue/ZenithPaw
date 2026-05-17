@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -158,6 +157,9 @@ class UserViewModel @Inject constructor(
      */
     private fun onCreateAccountClicked(name: String, email: String){
         viewModelScope.launch {
+            // Clear the database since only one user can exist for the application on the device
+            userRepository.deleteAllUsers()
+
             //Create a new user
             val newUser = User(
                 userId = UUID.randomUUID().toString(),
@@ -169,6 +171,8 @@ class UserViewModel @Inject constructor(
             )
             //Save to the database
             userRepository.upsertUser(newUser)
+            //Close the register dialog
+            _uiState.update { it.copy(isRegisteringDialogVisible = false)}
         }
     }
 
@@ -194,6 +198,5 @@ class UserViewModel @Inject constructor(
             //Code to sync the data
         }
     }
-
 
 }

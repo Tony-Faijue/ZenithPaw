@@ -9,5 +9,7 @@ sealed interface UserUiEvent {
     object OnSaveProfileClicked : UserUiEvent
     object OnSyncCloudClicked : UserUiEvent
     object OnDeleteAccountClicked : UserUiEvent
+    object OnShowRegisterDialogClicked : UserUiEvent
+    object OnHideRegisterDialogClicked : UserUiEvent
     data class OnCreateAccountClicked(val name: String, val email: String) : UserUiEvent
 }

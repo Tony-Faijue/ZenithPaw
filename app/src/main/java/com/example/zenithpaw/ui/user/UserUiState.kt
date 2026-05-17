@@ -9,11 +9,15 @@ data class UserUiState(
     val gold: Int = 0,
     val inventory: List<UserInventoryItemUiState> = emptyList(),
     val isLoading: Boolean = false,
+    val isRegisteringDialogVisible: Boolean = false, //state of registration with dialog
     // Text field states that are editable
     val name: String = "",
     val email: String = "",
     val imageUrl: String = "",
-)
+){
+    //isRegistered depends on the userId property for registration check
+    val isRegistered: Boolean get() = userId.isNotEmpty()
+}
 
 /**
  * Mapper/Extension function to convert UserUiState to UserEntity

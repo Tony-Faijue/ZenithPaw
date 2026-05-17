@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -14,6 +15,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.zenithpaw.R
 import com.example.zenithpaw.ui.uievents.UserUiEvent
@@ -24,7 +27,7 @@ fun RegisterUserDialog(
     state: UserUiState, onEvent: (UserUiEvent) -> Unit, modifier: Modifier
 ){
     AlertDialog(
-        modifier = modifier.background(MaterialTheme.colorScheme.background),
+        modifier = modifier,
         onDismissRequest = {
             onEvent(UserUiEvent.OnHideRegisterDialogClicked)
         },
@@ -66,7 +69,11 @@ fun RegisterUserDialog(
                         onEvent(UserUiEvent.OnEmailChange(it))
                     },
                     label = { Text("Email")},
-                    placeholder = { Text("Your Email")}
+                    placeholder = { Text("Your Email")},
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Unspecified,
+                        autoCorrectEnabled = false,
+                    )
                 )
             }
         }

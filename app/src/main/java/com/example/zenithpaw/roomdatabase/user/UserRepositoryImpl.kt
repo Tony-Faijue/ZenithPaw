@@ -22,4 +22,7 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
     override fun getUsers(): Flow<List<User>> {
         return userDao.getUsers()
     }
+    override suspend fun deleteAllUsers(){
+        return userDao.deleteAllUsers()
+    }
 }

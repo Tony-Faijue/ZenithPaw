@@ -29,4 +29,7 @@ interface ShopItemDao {
 
     @Query("SELECT * FROM shop_items")
     fun getShopItems(): Flow<List<ShopItem>>
+
+    @Query("SELECT * FROM shop_items WHERE shopId = :shopId")
+    fun getShopItemsByShopId(shopId: String): Flow<List<ShopItem>>
 }

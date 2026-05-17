@@ -22,4 +22,7 @@ class ShopItemRepositoryImpl @Inject constructor(private val shopItemDao: ShopIt
     override fun getShopItems(): Flow<List<ShopItem>> {
         return shopItemDao.getShopItems()
     }
+    override fun getShopItemsByShopId(shopId: String): Flow<List<ShopItem>> {
+        return shopItemDao.getShopItemsByShopId(shopId)
+    }
 }

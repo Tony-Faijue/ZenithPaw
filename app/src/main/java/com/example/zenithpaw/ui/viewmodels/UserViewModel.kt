@@ -51,7 +51,7 @@ class UserViewModel @Inject constructor(
                 val currentUser = users.firstOrNull()
                 if (currentUser == null){
                    //No user found
-                    _uiState.update {it.copy(isLoading = false)}
+                    _uiState.update {it.copy(isLoading = false, userId = "")}
                     flowOf(Unit) // Emit nothing
                 }
                 else {
@@ -74,16 +74,21 @@ class UserViewModel @Inject constructor(
                             }
                             //4. Update UI state with user data and inventory items
                             _uiState.update{ currentState ->
+                                // isFirstLoad is true when when current user has not been set yet
+                                val isFirstLoad = currentState.userId.isEmpty()
+
                                 currentState.copy(
                                     userId = currentUser.userId,
                                     lastLogin = currentUser.lastLogin,
                                     gold = currentUser.gold,
                                     inventory = displayItems,
                                     isLoading = false,
-                                    //Set the text fields to the current user data only if they are blank
-                                    name = currentState.name.ifEmpty { currentUser.name },
-                                    email = currentState.email.ifEmpty { currentUser.email },
-                                    imageUrl = currentState.imageUrl.ifEmpty { currentUser.imageUrl },
+
+                                    //If first load: Seed from Database(currentUser)
+                                    //Else already loaded: Seed from UI State(currentState)
+                                    name = if (isFirstLoad) currentUser.name else currentState.name ,
+                                    email = if (isFirstLoad) currentUser.email else currentState.email ,
+                                    imageUrl = if (isFirstLoad) currentUser.imageUrl else currentState.imageUrl ,
                                 )
                             }
                         }
@@ -115,6 +120,10 @@ class UserViewModel @Inject constructor(
                     UserUiEvent.OnSaveProfileClicked -> onSaveProfileClicked() // Will save all the changes for User Data
                     UserUiEvent.OnSyncCloudClicked -> onSyncCloudClicked()
                     UserUiEvent.OnDeleteAccountClicked -> onDeleteAccountClicked()
+
+                    //Dialog actions
+                    UserUiEvent.OnShowRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = true) }}
+                    UserUiEvent.OnHideRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = false) }}
                     else -> { } //Do nothing
                 }
             }
@@ -174,5 +183,6 @@ class UserViewModel @Inject constructor(
             //Code to sync the data
         }
     }
+
 
 }

@@ -15,8 +15,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -44,56 +46,64 @@ class UserViewModel @Inject constructor(
      * Observe user data and update UI state
      */
     private fun observeUserData(){
+        // Observe the User Profile Name, Email, Gold, and Profile Image
         viewModelScope.launch {
             //1. Observe the users
-            // Use of flatMapLatest to cancel previous flows when changes occur
-            userRepository.getUsers().flatMapLatest { users ->
-                val currentUser = users.firstOrNull()
-                if (currentUser == null){
-                   //No user found
-                    _uiState.update {it.copy(isLoading = false, userId = "")}
-                    flowOf(Unit) // Emit nothing
+            userRepository.getUsers()
+                // .distinctUntilChanged - Prevents UI components from re-rendering if the data hasn't changed
+                .distinctUntilChanged { old, new -> // old and new list of users
+                    //Only trigger if the user object changed
+                    old.firstOrNull()?.userId == new.firstOrNull()?.userId && old.firstOrNull()?.gold == new.firstOrNull()?.gold
+                }.collect { users ->
+                    val currentUser = users.firstOrNull()
+                    if (currentUser == null) {
+                        //No user found
+                        _uiState.update { it.copy(isLoading = false, userId = "") }
+                    } else {
+                        _uiState.update { currentState ->
+                            val isNewUserMapping = currentState.userId != currentUser.userId
+                            currentState.copy(
+                                userId = currentUser.userId,
+                                lastLogin = currentUser.lastLogin,
+                                gold = currentUser.gold,
+                                isLoading = false,
+                                //If new user mapping: Seed from Database(currentUser)
+                                //Else already loaded: Seed from UI State(currentState)
+                                name = if (isNewUserMapping) currentUser.name else currentState.name,
+                                email = if (isNewUserMapping) currentUser.email else currentState.email,
+                                imageUrl = if (isNewUserMapping) currentUser.imageUrl else currentState.imageUrl,
+                            )
+                        }
+                    }
                 }
-                else {
-                    //2. Observe both the user inventory items for currentUser and shop items
-                    combine(
-                        userInventoryItemRepository.getUserInventoryItemsByUserId(currentUser.userId),
-                        shopItemRepository.getShopItems()
-                        ) { inventory, shopItems ->
-                            //3. Combine the inventory items and shop items
-                            val displayItems = inventory.map { inventoryItem ->
-                                //Find the corresponding shop item
+            }
+        //Observe the Inventory and Shop Items
+        viewModelScope.launch {
+            userRepository.getUsers()
+                .flatMapLatest { users ->
+                    val user = users.firstOrNull()
+                    if (user == null) {
+                        flowOf(emptyList<UserInventoryItemUiState>())
+                    } else {
+                        combine(
+                            userInventoryItemRepository.getUserInventoryItemsByUserId(user.userId),
+                            shopItemRepository.getShopItems()
+                        ){
+                            inventory, shopItems ->
+                            inventory.map { inventoryItem ->
                                 val details = shopItems.find { it.shopItemId == inventoryItem.shopItemId }
-                                //Convert to the UI state
                                 UserInventoryItemUiState(
                                     inventoryItemId = inventoryItem.inventoryItemId,
+                                    quantity = inventoryItem.quantity,
                                     name = details?.name ?: "",
                                     imageUrl = details?.imageUrl ?: "",
-                                    quantity = inventoryItem.quantity,
-                                )
-                            }
-                            //4. Update UI state with user data and inventory items
-                            _uiState.update{ currentState ->
-                                // isFirstLoad is true when when current user has not been set yet
-                                val isFirstLoad = currentState.userId.isEmpty()
-
-                                currentState.copy(
-                                    userId = currentUser.userId,
-                                    lastLogin = currentUser.lastLogin,
-                                    gold = currentUser.gold,
-                                    inventory = displayItems,
-                                    isLoading = false,
-
-                                    //If first load: Seed from Database(currentUser)
-                                    //Else already loaded: Seed from UI State(currentState)
-                                    name = if (isFirstLoad) currentUser.name else currentState.name ,
-                                    email = if (isFirstLoad) currentUser.email else currentState.email ,
-                                    imageUrl = if (isFirstLoad) currentUser.imageUrl else currentState.imageUrl ,
                                 )
                             }
                         }
+                    }
+                }.collect { displayItems ->
+                    _uiState.update { it.copy(inventory = displayItems) }
                 }
-            }.collect{}
         }
     }
 
@@ -106,16 +116,17 @@ class UserViewModel @Inject constructor(
             is UserUiEvent.OnCreateAccountClicked -> {
                 onCreateAccountClicked(event.name, event.email)
             }
+            //Allow text field changes
+            is UserUiEvent.OnNameChange -> {_uiState.update { it.copy(name = event.name) }}
+            is UserUiEvent.OnEmailChange -> {_uiState.update { it.copy(email = event.email) }}
+            is UserUiEvent.OnChangeProfileImage -> {_uiState.update { it.copy(imageUrl = event.imageUrl) }}
+
+            //Protected Actions allowed only if user exists
             else -> {
                 //If the user data is not loaded yet, stop events
                 if(_uiState.value.userId.isEmpty()) return
                 //Map each event to the appropriate function
                 when (event){
-                    //Update the local UI state with the new data
-                    is UserUiEvent.OnNameChange -> {_uiState.update { it.copy(name = event.name) }}
-                    is UserUiEvent.OnEmailChange -> {_uiState.update { it.copy(email = event.email) }}
-                    is UserUiEvent.OnChangeProfileImage -> {_uiState.update { it.copy(imageUrl = event.imageUrl) }}
-
                     //Database persistence actions
                     UserUiEvent.OnSaveProfileClicked -> onSaveProfileClicked() // Will save all the changes for User Data
                     UserUiEvent.OnSyncCloudClicked -> onSyncCloudClicked()

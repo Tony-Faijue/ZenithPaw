@@ -109,20 +109,26 @@ class ShopViewModel @Inject constructor(
     private fun onEvent(event: ShopUiEvent){
         if (_uiState.value.shopId.isEmpty()) return //If the shopId is not loaded yet, stop events
         when (event){
-            //User buys the shop item
-            is ShopUiEvent.OnBuyItemClicked -> onBuyItemClicked(event.shopItemId)
-            //User previews the shop item
+            // User selects and item to preview
             is ShopUiEvent.OnPreviewItemClicked -> onPreviewItemClicked(event.shopItemId)
-            //Dialog Actions
-            ShopUiEvent.OnShowPreviewDialogClicked -> _uiState.update { it.copy(isPreviewVisible = true) }
+            // User selects an item to buy it showing the confirmation dialog
+            is ShopUiEvent.OnShowConfirmBuyDialogClicked -> onBuyInitiated(event.shopItemId)
+            // User confirms the purchase
+            is ShopUiEvent.OnConfirmPurchase -> {
+                // Uses the already selected item for the purchase
+                _uiState.value.selectedItem?.let { item ->
+                    onBuyItemClicked(item.shopItemId)
+                }
+            }
+
+            //Dialog Dismiss Actions
             ShopUiEvent.OnDismissPreviewDialogClicked -> _uiState.update { it.copy(isPreviewVisible = false) }
-            ShopUiEvent.OnShowConfirmBuyDialogClicked -> _uiState.update { it.copy(isBuyingVisible = true) }
             ShopUiEvent.OnDismissConfirmBuyDialogClicked -> _uiState.update { it.copy(isBuyingVisible = false) }
         }
     }
 
     /**
-     * Use buys the shop item reducing their gold and adding the shop item to their inventory
+     * User buys the shop item reducing their gold and adding the shop item to their inventory
      */
     private fun onBuyItemClicked(shopItemId: String){
         viewModelScope.launch{
@@ -171,14 +177,40 @@ class ShopViewModel @Inject constructor(
                     userInventoryItemRepository.insertUserInventoryItem(newItem)
                 }
                 //Close the confirmation dialog
-                _uiState.update { it.copy(isBuyingVisible = false, errorMessage = null) }
+                _uiState.update { it.copy(isBuyingVisible = false, errorMessage = null, selectedItem = null) }
             }
         }
     }
 
     /**
-     * Preview the shop item
+     * Preview the shop item in the UI state
      */
-    private fun onPreviewItemClicked(shopItemId: String){}
+    private fun onPreviewItemClicked(shopItemId: String){
+        if (selectItem(shopItemId)){
+            _uiState.update { it.copy(isPreviewVisible = true) }
+        }
+    }
+
+    /**
+     * Show the buying confirmation dialog
+     */
+    private fun onBuyInitiated(shopItemId: String){
+        if (selectItem(shopItemId)){
+            _uiState.update { it.copy(isBuyingVisible = true) }
+        }
+    }
+
+    /**
+     * Updates the selected item in the UI state
+     * returns true if the item was found and selected, false otherwise
+     */
+    private fun selectItem(shopItemId: String): Boolean{
+        val item = _uiState.value.availableItems.find { it.shopItemId == shopItemId }
+        if (item != null){
+            _uiState.update { it.copy(selectedItem = item, errorMessage = null) }
+            return true
+        }
+        return false
+    }
 
 }

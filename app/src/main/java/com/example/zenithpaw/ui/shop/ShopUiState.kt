@@ -15,5 +15,7 @@ data class ShopUiState(
     //UI Logic State
     val selectedItem: ShopItem? = null, // For showing preview dialog
     val isLoading: Boolean = false,
+    val isPreviewVisible: Boolean = false, // For preview dialog
+    val isBuyingVisible: Boolean = false, // For buying confirmation dialog
     val errorMessage: String? = null
 )

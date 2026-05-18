@@ -8,5 +8,6 @@ interface UserInventoryItemRepository {
     suspend fun deleteUserInventoryItem(userInventoryItem: UserInventoryItem)
     suspend fun updateUserInventoryItem(userInventoryItem: UserInventoryItem): Int
     suspend fun getUserInventoryItemById(inventoryItemId: String): UserInventoryItem
+    suspend fun getUserInventoryItemByShopItemId(userId: String, shopItemId: String): UserInventoryItem?
     fun getUserInventoryItemsByUserId(userId: String): Flow<List<UserInventoryItem>>
 }

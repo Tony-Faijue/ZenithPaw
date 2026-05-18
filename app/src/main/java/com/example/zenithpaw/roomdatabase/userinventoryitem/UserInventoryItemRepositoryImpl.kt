@@ -20,6 +20,9 @@ class UserInventoryItemRepositoryImpl @Inject constructor(private val userInvent
     override suspend fun getUserInventoryItemById(inventoryItemId: String): UserInventoryItem {
         return userInventoryItemDao.getUserInventoryItemById(inventoryItemId)
     }
+    override suspend fun  getUserInventoryItemByShopItemId(userId: String, shopItemId: String): UserInventoryItem? {
+        return userInventoryItemDao.getUserInventoryItemByShopItemId(userId, shopItemId)
+    }
     override fun getUserInventoryItemsByUserId(userId: String): Flow<List<UserInventoryItem>> {
         return userInventoryItemDao.getUserInventoryItemsByUserId(userId)
     }

@@ -27,6 +27,9 @@ interface UserInventoryItemDao {
     @Query("SELECT * FROM user_inventory_item WHERE inventoryItemId = :inventoryItemId")
     suspend fun getUserInventoryItemById(inventoryItemId: String): UserInventoryItem
 
+    @Query("SELECT * FROM user_inventory_item WHERE userId = :userId AND shopItemId = :shopItemId")
+    suspend fun getUserInventoryItemByShopItemId(userId: String, shopItemId: String): UserInventoryItem?
+
     @Query("SELECT * FROM user_inventory_item WHERE userId = :userId")
     fun getUserInventoryItemsByUserId(userId: String): Flow<List<UserInventoryItem>>
 }

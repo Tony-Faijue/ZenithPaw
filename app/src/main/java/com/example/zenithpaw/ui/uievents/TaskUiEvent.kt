@@ -16,6 +16,10 @@ sealed interface TaskUiEvent {
     // Task Creation
     data class OnCreateTaskClicked(val title: String, val description: String, val time: Long) : TaskUiEvent
 
+    // Task Start and Stop
+    data class OnStartTaskClicked(val taskId: String) : TaskUiEvent
+    object OnStopTaskClicked : TaskUiEvent
+
     // Save and Delete Actions
     object OnSaveTaskClicked : TaskUiEvent
     object OnDeleteTaskClicked : TaskUiEvent

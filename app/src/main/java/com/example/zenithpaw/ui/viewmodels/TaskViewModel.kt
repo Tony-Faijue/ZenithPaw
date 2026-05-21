@@ -95,6 +95,10 @@ class TaskViewModel @Inject constructor(
             //Selection Events
             is TaskUiEvent.OnTaskSelected -> onTaskSelected(event.taskId)
 
+            // Task Start and Stop
+            is TaskUiEvent.OnStartTaskClicked -> onStartTaskClicked(event.taskId)
+            is TaskUiEvent.OnStopTaskClicked -> onStopActiveTask()
+
             // Task Creation
             is TaskUiEvent.OnCreateTaskClicked -> onCreateTaskClicked(event.title, event.description, event.time)
 
@@ -203,4 +207,68 @@ class TaskViewModel @Inject constructor(
         return false
     }
 
+    /**
+     * Start the selected task
+     */
+    private fun onStartTaskClicked(taskId: String){
+        viewModelScope.launch {
+            if (selectTask(taskId)){
+               val taskUiStates = _uiState.value.tasks.map { task ->
+                    if (task.taskId != taskId){
+                        // Set all other task to Pending if not Completed
+                        if (task.taskState != TaskState.Completed){
+                            task.copy(taskState = TaskState.Pending)
+                        } else { task } //Keep Completed tasks as is
+                    } else {
+                        // Set selected task to InProgress
+                        task.copy(taskState = TaskState.InProgress)
+                    }
+                }
+                // Update the tasks in the ui state
+                _uiState.update { it.copy(tasks = taskUiStates, errorMessage = null) }
+
+                // Update the tasks in the database
+                val taskEntities = taskUiStates.map { it.toEntity() }
+                // Bulk task updates
+                taskRepository.upsertTasks(taskEntities)
+
+            } else {
+                _uiState.update { it.copy(errorMessage = "No Task Found: When Starting Task")}
+            }
+        }
+    }
+
+    /**
+     * Stop the active task
+     */
+    private fun onStopActiveTask(){
+        viewModelScope.launch {
+            // Get the current user
+            val users = userRepository.getUsers().first()
+            val currentUser = users.firstOrNull()
+
+            if (currentUser == null){
+                _uiState.update { it.copy(errorMessage = "No User Found: When Stopping Task")}
+                return@launch
+            }
+
+            // Get the active task for the current user
+            val activeTask = taskRepository.getActiveTaskForUser(currentUser.userId).firstOrNull()
+            if (activeTask == null){
+                _uiState.update { it.copy(errorMessage = "No Active Task Found: When Stopping Task")}
+                return@launch
+            }
+
+            // Update the active task to Pending in the UI state
+            val taskUiStates = _uiState.value.tasks.map {task ->
+                if (task.taskId == activeTask.taskId){
+                    task.copy(taskState = TaskState.Pending)
+                } else { task } // leave the task as is if not the active task
+            }
+            _uiState.update { it.copy(tasks = taskUiStates, errorMessage = null) }
+
+            // Update the active task state to Pending in the database
+            taskRepository.upsertTask(activeTask.copy(taskState = TaskState.Pending))
+        }
+    }
 }

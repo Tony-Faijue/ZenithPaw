@@ -29,7 +29,6 @@ import javax.inject.Inject
 @HiltViewModel
 class PetViewModel @Inject constructor(
     private val petRepository: PetRepository,
-    private val taskRepository: TaskRepository,
     private val shopItemRepository: ShopItemRepository,
     private val userRepository: UserRepository,
     private val userInventoryItemRepository: UserInventoryItemRepository

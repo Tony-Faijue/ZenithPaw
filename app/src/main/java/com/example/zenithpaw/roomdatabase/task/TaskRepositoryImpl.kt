@@ -10,6 +10,9 @@ class TaskRepositoryImpl @Inject constructor(private val taskDao: TaskDao) : Tas
     override suspend fun upsertTask(task: Task) {
         taskDao.upsertTask(task)
     }
+    override suspend fun upsertTasks(tasks: List<Task>) {
+        taskDao.upsertTasks(tasks)
+    }
     override suspend fun deleteTask(task: Task) {
         taskDao.deleteTask(task)
     }
@@ -21,5 +24,8 @@ class TaskRepositoryImpl @Inject constructor(private val taskDao: TaskDao) : Tas
     }
     override fun getTasksForUser(userId: String): Flow<List<Task>> {
         return taskDao.getTasksForUser(userId)
+    }
+    override fun getActiveTaskForUser(userId: String): Flow<Task> {
+       return taskDao.getActiveTaskForUser(userId)
     }
 }

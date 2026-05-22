@@ -11,6 +11,7 @@ import com.example.zenithpaw.ui.task.toEntity
 import com.example.zenithpaw.ui.task.toTaskUiState
 import com.example.zenithpaw.ui.uievents.TaskUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,6 +35,7 @@ class TaskViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(TaskScreenUiState(isLoading = true))
     val uiState: StateFlow<TaskScreenUiState> = _uiState.asStateFlow()
 
+    private var partialGold = 0.0 // Partial gold earned during the task
     /**
      * Initialize the ViewModel by observing task data
      */
@@ -232,6 +234,8 @@ class TaskViewModel @Inject constructor(
                 // Bulk task updates
                 taskRepository.upsertTasks(taskEntities)
 
+                // Start the task timer
+                onStartTaskTimer()
             } else {
                 _uiState.update { it.copy(errorMessage = "No Task Found: When Starting Task")}
             }
@@ -269,6 +273,53 @@ class TaskViewModel @Inject constructor(
 
             // Update the active task state to Pending in the database
             taskRepository.upsertTask(activeTask.copy(taskState = TaskState.Pending))
+        }
+    }
+
+    private fun onStartTaskTimer(){
+        viewModelScope.launch {
+            // Get current user
+            val users = userRepository.getUsers().first()
+            val currentUser = users.firstOrNull()
+            if (currentUser == null) return@launch
+
+            while (true) {
+                delay(1000)
+                // Find the task that is currently in progress
+                val activeTask = _uiState.value.tasks.find { it.taskState == TaskState.InProgress }
+                if (activeTask == null) return@launch
+
+                if (activeTask.time > 0) {
+                    // Decrement the active task time
+                    val newTime = activeTask.time - 1L
+                    // Update the active task in the database
+                    val task = activeTask.toEntity()
+                    taskRepository.upsertTask(task.copy(time = newTime))
+
+                    // Gold Reward Logic
+
+                    val goldRatePerSecond = 0.05
+                    partialGold += goldRatePerSecond
+
+                    // Only update database if partialGold is greater than equal to 1
+                    if (partialGold >= 1.0){
+                        val goldToAward = partialGold.toInt()
+                        // Get the latest gold value from the database
+                        val latestUser = userRepository.getUserById(currentUser.userId)
+                        latestUser?.let {
+                            userRepository.upsertUser(latestUser.copy(gold = latestUser.gold + goldToAward))
+                        }
+                        partialGold -= goldToAward // keep the remaining gold for next timer tick
+                    }
+                } else {
+                    // The active task is complete
+                    // Update the task state in the database
+                    val task = activeTask.toEntity()
+                    taskRepository.upsertTask(task.copy(time = 0L, taskState = TaskState.Completed))
+                    partialGold = 0.0 // Reset the partial gold
+                    return@launch // exit
+                }
+            }
         }
     }
 }

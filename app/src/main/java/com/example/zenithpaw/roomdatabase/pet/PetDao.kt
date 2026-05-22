@@ -21,6 +21,10 @@ interface PetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertPet(pet: Pet)
 
+    // Bulk Pet Updates
+    @Upsert
+    suspend fun upsertPets(pets: List<Pet>)
+
     @Delete
     suspend fun deletePet(pet: Pet)
 
@@ -40,6 +44,5 @@ interface PetDao {
     //Get all pets that are not downloaded yet
     @Query("SELECT * FROM pets WHERE isDownloaded = 0")
     suspend fun getPetsPendingDownload(): List<Pet>
-
 
 }

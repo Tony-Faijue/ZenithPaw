@@ -10,6 +10,9 @@ class PetRepositoryImpl @Inject constructor(private val petDao: PetDao) : PetRep
     override suspend fun upsertPet(pet: Pet) {
         petDao.upsertPet(pet)
     }
+    override suspend fun upsertPets(pets: List<Pet>) {
+        petDao.upsertPets(pets)
+    }
     override suspend fun deletePet(pet: Pet) {
         petDao.deletePet(pet)
     }

@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    //NeoBrutal Dependencies
+    implementation(libs.neobrutal.lib)
     //Room Dependencies
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

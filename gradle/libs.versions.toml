@@ -16,6 +16,8 @@ ksp = "2.1.0-1.0.29"
 hilt = "2.54"
 hiltNavgigationCompose = "1.2.0"
 material3 = "1.4.0"
+#Neobrutal Version
+neobrutal = "1.0.9"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +31,9 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
 hilt-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt"}
 androidx-hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavgigationCompose"}
+
+#Neobrutal Library
+neobrutal-lib = {group = "com.github.zahid4kh", name = "neobrutal-lib", version.ref = "neobrutal" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

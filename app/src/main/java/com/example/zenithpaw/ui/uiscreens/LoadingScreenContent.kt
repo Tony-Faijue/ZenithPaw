@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import zahid.neobrutal.cards.NeoBasicCard
 
 /**
  * The loading screen content to show in the UI
@@ -46,9 +47,13 @@ fun LoadingScreenContent(modifier: Modifier){
                     textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Progress Bar",
-                    textAlign = TextAlign.Center,
+                // Example use of NeoBrutal Composable Item
+                NeoBasicCard(
+                    title = {
+                        Text("Progress Bar Title") },
+                    content = {
+                        Text("Progress Bar Content")
+                    }
                 )
             }
         }

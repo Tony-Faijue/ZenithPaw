@@ -90,6 +90,7 @@ fun AppTextField(
                 color = labelColor,
                 fontWeight = labelStyle.fontWeight,
                 fontSize = labelStyle.fontSize,
+                fontFamily = labelStyle.fontFamily,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }

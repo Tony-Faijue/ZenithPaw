@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -45,7 +46,11 @@ fun AppButton(
     shadowOffset: Dp = 4.dp,
     shadowColor: Color = Color.Black,
     shape: Shape = RectangleShape,
-    fontSize: TextUnit = 16.sp
+    textStyle: TextStyle = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.Bold,
+        fontSize = 48.sp
+    )
 ){
     var isPressed by remember { mutableStateOf(false) }
 
@@ -94,11 +99,7 @@ fun AppButton(
             Text(
                 text = text,
                 color = textColor,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    // Custom font size
-                    fontSize = fontSize,
-                ),
+                style = textStyle,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
         }

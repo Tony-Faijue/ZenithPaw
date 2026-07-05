@@ -47,7 +47,7 @@ fun AppButtonPreview() {
     // dynamic color false use custom theme instead of dynamic theme
     ZenithPawTheme (dynamicColor = false){
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
-            AppButton(text = "App Button", onClick = {}, shadowColor = Color.Black, shadowOffset = 12.dp, modifier = Modifier.size(width = 300.dp, height = 175.dp), fontSize = 48.sp)
+            AppButton(text = "App Button", onClick = {}, shadowColor = Color.Black, shadowOffset = 12.dp, modifier = Modifier.size(width = 300.dp, height = 175.dp))
             Spacer(modifier = Modifier.height(16.dp))
             NeoButton(text = "Neo Button", onClick = {}, shadowColor = Color.Black, shadowOffset = 12.dp)
         }

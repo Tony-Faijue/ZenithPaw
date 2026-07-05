@@ -19,6 +19,8 @@ material3 = "1.4.0"
 #Neobrutal Version
 neobrutal = "1.0.9"
 foundation = "1.11.3"
+#COIL Version
+coil = "3.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +37,10 @@ androidx-hilt-navigation-compose = {group = "androidx.hilt", name = "hilt-naviga
 
 #Neobrutal Library
 neobrutal-lib = {group = "com.github.zahid4kh", name = "neobrutal-lib", version.ref = "neobrutal" }
+
+#COIL Libraries
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

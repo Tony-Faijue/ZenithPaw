@@ -70,6 +70,9 @@ dependencies {
     //Hilt Dependencies
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    //COIL Dependencies
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
     implementation(libs.androidx.hilt.navigation.compose)
     //Testing Dependencies
     testImplementation(libs.junit)

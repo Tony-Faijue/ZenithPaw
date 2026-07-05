@@ -14,8 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
-import com.example.zenithpaw.ui.uiscreens.LoadingScreenContent
 import com.example.zenithpaw.ui.uiscreens.MainScreenContent
+import com.example.zenithpaw.ui.uiscreens.PixelLoadingScreen
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppTextField
 import com.example.zenithpaw.ui.user.UserUiState
@@ -30,14 +30,6 @@ fun MainScreenPreview() {
             uiState = UserUiState(isLoading = false, name = "John", email = "john@example.com"),
             onEvent = {}
         )
-    }
-}
-
-@Preview(showBackground = true, name = "Loading Screen")
-@Composable
-fun LoadingScreenPreview() {
-    ZenithPawTheme {
-        LoadingScreenContent(modifier= Modifier)
     }
 }
 
@@ -76,5 +68,13 @@ fun AppTextFieldPreview() {
                 placeholder = "Placeholder"
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "PixelLoadingScreen")
+@Composable
+fun PixelLoadingScreenPreview() {
+    ZenithPawTheme {
+        PixelLoadingScreen(isVisible = true, onAnimationFinished = {})
     }
 }

@@ -23,7 +23,6 @@ fun MainScreenContent(
     onEvent: (UserUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ){
-    var isDismissed by rememberSaveable { mutableStateOf(false) }
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -40,17 +39,6 @@ fun MainScreenContent(
             Text(
                 modifier = Modifier,
                 text = "Sample Main Screen, Hello ${uiState.name}!"
-            )
-        }
-
-        // Overlay the loading scree on top of the content
-        if (!isDismissed) {
-            //Show Loading Screen
-            PixelLoadingScreen(
-                isVisible = uiState.isLoading,
-                onAnimationFinished = {
-                    isDismissed = true // Permanently dismiss the loading screen
-                }
             )
         }
     }

@@ -4,13 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uiscreens.MainScreenContent
 import com.example.zenithpaw.ui.uiscreens.PixelLoadingScreen
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.SpriteSheetAnimation
 import com.example.zenithpaw.ui.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +28,7 @@ class MainActivity : ComponentActivity() {
             ZenithPawTheme {
                 MainScreen()
 //              PixelLoadingScreen(true, {})
+//                SpriteSheetAnimation(R.drawable.cat_run_jump, 3, modifier = Modifier.size(width = 200.dp, height = 150.dp, ))
             }
         }
     }

@@ -8,11 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.ImageLoader
-import coil3.SingletonImageLoader
-import coil3.gif.AnimatedImageDecoder
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uiscreens.MainScreenContent
+import com.example.zenithpaw.ui.uiscreens.PixelLoadingScreen
 import com.example.zenithpaw.ui.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,16 +19,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Coil setup in MainActivity
-        SingletonImageLoader.setSafe {context ->
-            ImageLoader.Builder(context)
-                .components {
-                    add(AnimatedImageDecoder.Factory())
-                }.build()
-        }
         setContent {
             ZenithPawTheme {
                 MainScreen()
+//              PixelLoadingScreen(true, {})
             }
         }
     }

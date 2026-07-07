@@ -11,6 +11,7 @@ import com.example.zenithpaw.ui.user.UserUiState
 import com.example.zenithpaw.ui.user.toEntity
 import com.example.zenithpaw.ui.userinventoryitem.UserInventoryItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -45,8 +47,10 @@ class UserViewModel @Inject constructor(
      * Observe user data and update UI state
      */
     private fun observeUserData(){
+        // set state isLoading to true first
+        _uiState.update{it.copy(isLoading = true)}
         // Observe the User Profile Name, Email, Gold, and Profile Image
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             //1. Observe the users
             userRepository.getUsers()
                 // .distinctUntilChanged - Prevents UI components from re-rendering if the data hasn't changed
@@ -77,7 +81,7 @@ class UserViewModel @Inject constructor(
                 }
             }
         //Observe the Inventory and Shop Items
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userRepository.getUsers()
                 .flatMapLatest { users ->
                     val user = users.firstOrNull()
@@ -100,7 +104,8 @@ class UserViewModel @Inject constructor(
                             }
                         }
                     }
-                }.collect { displayItems ->
+                }   .flowOn(Dispatchers.Default) //Run on the default dispatcher since simple transform/filter operations
+                    .collect { displayItems ->
                     _uiState.update { it.copy(inventory = displayItems) }
                 }
         }

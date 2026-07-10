@@ -21,6 +21,14 @@ neobrutal = "1.0.9"
 foundation = "1.11.3"
 #COIL Version
 coil = "3.0.4"
+#JUnit5 Jupiter Version
+junit-jupiter = "5.10.0"
+#Mockk Version
+mockk = "1.13.12"
+#Kotlin Coroutines Test Version
+kotlinx-coroutines-test = "1.9.0"
+#Turbine Version
+turbine = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +49,18 @@ neobrutal-lib = {group = "com.github.zahid4kh", name = "neobrutal-lib", version.
 #COIL Libraries
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
+
+#JUnit5 Jupiter Library
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter"}
+
+#Mockk Library
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+
+#Kotlin Coroutines Test Library
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+
+#Turbine Library
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

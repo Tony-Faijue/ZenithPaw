@@ -1,10 +1,13 @@
 package com.example.zenithpaw.ui.previews
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +23,14 @@ import com.example.zenithpaw.R
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uiscreens.MainScreenContent
 import com.example.zenithpaw.ui.uiscreens.PixelLoadingScreen
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicBackgroundLayout
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppIconButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppTextField
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppToggleButton
 import com.example.zenithpaw.ui.user.UserUiState
 import zahid.neobrutal.buttons.NeoButton
+import zahid.neobrutal.cards.NeoBasicCard
 import zahid.neobrutal.inputs.NeoTextField
 
 @Preview(showBackground = true, name = "Main Screen")
@@ -106,6 +111,28 @@ fun AppTextFieldPreview() {
                 placeholder = "Placeholder"
             )
         }
+    }
+}
+@Preview(showBackground = true, name = "AppBasicBackgroundLayout")
+@Composable
+fun AppBasicBackgroundLayoutPreview() {
+    ZenithPawTheme {
+        AppBasicBackgroundLayout(
+            content = {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize(),
+                ){
+                    NeoBasicCard(
+                        title = { Text("Neo Basic Card") }, content = {}, backgroundColor = Color.Magenta
+                    )
+                }
+            },
+            modifier = Modifier.size(width = 300.dp, height = 300.dp),
+            shadowOffset = 10.dp,
+            borderWidth = 2.2.dp
+        )
     }
 }
 

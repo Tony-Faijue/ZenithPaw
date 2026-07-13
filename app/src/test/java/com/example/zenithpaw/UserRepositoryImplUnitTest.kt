@@ -13,7 +13,7 @@ import org.junit.Assert.*
 
 //See [testing documentation](http://d.android.com/tools/testing).
 /**
- *
+ *Quick Example of Unit Test in ZenithPaw
  */
 class UserRepositoryImplUnitTest {
     // Mock the dependencies

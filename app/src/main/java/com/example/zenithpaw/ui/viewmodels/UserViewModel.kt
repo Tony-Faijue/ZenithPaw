@@ -2,6 +2,7 @@ package com.example.zenithpaw.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.zenithpaw.roomdatabase.DefaultDispatcher
 import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
 import com.example.zenithpaw.roomdatabase.user.User
 import com.example.zenithpaw.roomdatabase.user.UserRepository
@@ -11,6 +12,7 @@ import com.example.zenithpaw.ui.user.UserUiState
 import com.example.zenithpaw.ui.user.toEntity
 import com.example.zenithpaw.ui.userinventoryitem.UserInventoryItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +33,7 @@ class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val userInventoryItemRepository: UserInventoryItemRepository,
     private val shopItemRepository: ShopItemRepository,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ): ViewModel() {
     //Single source of truth for UI state
     private val _uiState = MutableStateFlow(UserUiState(isLoading = true)) //loading user state first
@@ -50,14 +53,12 @@ class UserViewModel @Inject constructor(
         // set state isLoading to true first
         _uiState.update{it.copy(isLoading = true)}
         // Observe the User Profile Name, Email, Gold, and Profile Image
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             //1. Observe the users
             userRepository.getUsers()
-                // .distinctUntilChanged - Prevents UI components from re-rendering if the data hasn't changed
-                .distinctUntilChanged { old, new -> // old and new list of users
-                    //Only trigger if the user object changed
-                    old.firstOrNull()?.userId == new.firstOrNull()?.userId && old.firstOrNull()?.gold == new.firstOrNull()?.gold
-                }.collect { users ->
+                //Prevents UI components from re-rendering if the data hasn't changed
+                .distinctUntilChanged() // rely on default change detection since automatically checks every property in the user data class
+                .collect { users ->
                     val currentUser = users.firstOrNull()
                     if (currentUser == null) {
                         //No user found
@@ -81,7 +82,7 @@ class UserViewModel @Inject constructor(
                 }
             }
         //Observe the Inventory and Shop Items
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             userRepository.getUsers()
                 .flatMapLatest { users ->
                     val user = users.firstOrNull()
@@ -104,7 +105,7 @@ class UserViewModel @Inject constructor(
                             }
                         }
                     }
-                }   .flowOn(Dispatchers.Default) //Run on the default dispatcher since simple transform/filter operations
+                }   .flowOn(defaultDispatcher) //Run on the default dispatcher since simple transform/filter operations
                     .collect { displayItems ->
                     _uiState.update { it.copy(inventory = displayItems) }
                 }

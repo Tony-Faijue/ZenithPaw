@@ -62,7 +62,7 @@ class UserViewModel @Inject constructor(
                     val currentUser = users.firstOrNull()
                     if (currentUser == null) {
                         //No user found
-                        _uiState.update { it.copy(isLoading = false, userId = "") }
+                        _uiState.update { it.copy(isLoading = false, userId = "", errorMessage = "No user found") }
                     } else {
                         _uiState.update { currentState ->
                             val isNewUserMapping = currentState.userId != currentUser.userId

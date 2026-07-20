@@ -1,18 +1,21 @@
 package com.example.zenithpaw
 
 import app.cash.turbine.test
+import com.example.zenithpaw.roomdatabase.shopitem.ShopItem
 import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
 import com.example.zenithpaw.roomdatabase.user.User
 import com.example.zenithpaw.roomdatabase.user.UserRepository
+import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItem
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
+import com.example.zenithpaw.ui.uievents.UserUiEvent
 import com.example.zenithpaw.ui.viewmodels.UserViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -117,4 +120,39 @@ class UserViewModelUnitTests {
         }
     }
 
+    @Test
+    fun `when database updates, existing user typed changes are not overwritten`() = runTest(testDispatcher){
+        // Arrange
+        val initialUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
+        val userFlow = MutableStateFlow(listOf(initialUser))
+
+        every { userRepository.getUsers() } returns userFlow
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(initialUser.userId) } returns flowOf(emptyList())
+        every { shopItemRepository.getShopItems() } returns flowOf(emptyList())
+
+
+        val viewModel = UserViewModel(userRepository, userInventoryItemRepository, shopItemRepository, testDispatcher)
+
+        viewModel.uiState.test {
+            val initialState = awaitItem() // Initial loading state
+            assert(initialState.isLoading)
+
+            val loadedState = awaitItem() // Loaded state with initial data
+            assertEquals(initialUser.name, loadedState.name)
+
+            // Act -> Update the name (field the user is currently editing)
+            viewModel.onEvent(UserUiEvent.OnNameChange("NewName"))
+            val typedState = awaitItem()
+            assertEquals("NewName", typedState.name)
+
+            // Act -> Update the gold (field updated not directly by the user)
+            val updatedDbUser = initialUser.copy(gold = 500)
+            userFlow.value = listOf(updatedDbUser)
+
+            // Assert -> The name should not have changed AND gold is updated
+            val finalState = awaitItem()
+            assertEquals(500, finalState.gold)
+            assertEquals("NewName", finalState.name)
+        }
+    }
 }

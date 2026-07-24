@@ -18,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -125,7 +126,7 @@ class UserViewModelUnitTests {
     fun `when database updates, existing user typed changes are not overwritten`() = runTest(testDispatcher){
         // Arrange
         val initialUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
-        val userFlow = MutableStateFlow(listOf(initialUser))
+        val userFlow = MutableStateFlow(listOf(initialUser)) // MutableStateFlow to simulate database changes
 
         every { userRepository.getUsers() } returns userFlow
         every { userInventoryItemRepository.getUserInventoryItemsByUserId(initialUser.userId) } returns flowOf(emptyList())
@@ -183,7 +184,6 @@ class UserViewModelUnitTests {
             assertEquals(false, finalState.isRegisteringDialogVisible)
             assertEquals(false, finalState.isLoading)
 
-
             coVerify(exactly = 1) { userRepository.deleteAllUsers() }
             coVerify(exactly = 1) { userRepository.upsertUser(any()) }
         }
@@ -229,6 +229,76 @@ class UserViewModelUnitTests {
             assertEquals(false, typedStateEmail.isLoading)
 
             coVerify(exactly = 1) { userRepository.upsertUser(any()) }
+        }
+    }
+
+    @Test
+    fun `when user inventory repository is not null, inventory is seeded`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
+        val testUsers = listOf(testUser)
+
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val userInventoryItem = UserInventoryItem("inventory_item_id_1", testUser.userId, shopItem.shopItemId, 3)
+        val shopItems = listOf(shopItem)
+        val userInventoryItems = listOf(userInventoryItem)
+
+        every { userRepository.getUsers() } returns flowOf(testUsers)
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(testUser.userId) } returns flowOf(userInventoryItems)
+        every { shopItemRepository.getShopItems() } returns flowOf(shopItems)
+
+        val viewModel = UserViewModel(userRepository, userInventoryItemRepository, shopItemRepository, testDispatcher)
+
+        viewModel.uiState.test {
+            val initialState = awaitItem()
+            // Assert the initial state
+            assert(initialState.isLoading)
+            // Assert the loaded state
+            val loadedState = awaitItem()
+            assertEquals(testUser.name, loadedState.name)
+
+            val finalState = awaitItem()
+            // Assert the seeded inventory
+            assertEquals(1, finalState.inventory.size)
+            assertEquals(shopItem.name, finalState.inventory[0].name)
+            assertEquals(userInventoryItem.quantity, finalState.inventory[0].quantity)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when user account is deleted, user is removed from the database`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
+        val userFlow = MutableStateFlow(listOf(testUser))  // MutableStateFlow to simulate database changes
+
+        every { userRepository.getUsers() } returns userFlow
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(testUser.userId) } returns flowOf(emptyList())
+        every { shopItemRepository.getShopItems() } returns flowOf(emptyList())
+
+        coEvery { userRepository.deleteUser(testUser) } returns Unit
+
+        val viewModel = UserViewModel(userRepository, userInventoryItemRepository, shopItemRepository, testDispatcher)
+
+        viewModel.uiState.test {
+            // Assert the initial state
+            val initialState = awaitItem()
+            assert(initialState.isLoading)
+
+            // Assert the loaded state
+            val loadedState = awaitItem()
+            assertEquals(testUser.name, loadedState.name)
+
+            // Act -> Set the flow to an empty list to simulate user deletion
+            viewModel.onEvent(UserUiEvent.OnDeleteAccountClicked)
+            userFlow.value = emptyList()
+
+            val finalState = awaitItem()
+            assertEquals("", finalState.name)
+            assertEquals("", finalState.userId)
+            assertEquals("No user found", finalState.errorMessage)
+
+            coVerify(exactly = 1) { userRepository.deleteUser(any()) }
         }
     }
 }

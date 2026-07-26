@@ -21,28 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.zenithpaw.R
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
-import com.example.zenithpaw.ui.uiscreens.MainScreenContent
-import com.example.zenithpaw.ui.uiscreens.PixelLoadingScreen
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicBackgroundLayout
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppIconButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppTextField
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppToggleButton
-import com.example.zenithpaw.ui.user.UserUiState
 import zahid.neobrutal.buttons.NeoButton
 import zahid.neobrutal.cards.NeoBasicCard
 import zahid.neobrutal.inputs.NeoTextField
-
-@Preview(showBackground = true, name = "Main Screen")
-@Composable
-fun MainScreenPreview() {
-    ZenithPawTheme(dynamicColor = false) {
-        MainScreenContent(
-            uiState = UserUiState(isLoading = false, name = "John", email = "john@example.com"),
-            onEvent = {}
-        )
-    }
-}
 
 @Preview(showBackground = true, name = "AppButton Preview")
 @Composable
@@ -56,6 +42,7 @@ fun AppButtonPreview() {
         }
     }
 }
+
 @Preview(showBackground = true, name = "AppIconButton Preview")
 @Composable
 fun AppIconButtonPreview() {
@@ -72,6 +59,7 @@ fun AppIconButtonPreview() {
         }
     }
 }
+
 @Preview(showBackground = true, name = "AppToggleButton Preview")
 @Composable
 fun AppToggleButtonPreview() {
@@ -113,6 +101,7 @@ fun AppTextFieldPreview() {
         }
     }
 }
+
 @Preview(showBackground = true, name = "AppBasicBackgroundLayout")
 @Composable
 fun AppBasicBackgroundLayoutPreview() {
@@ -133,13 +122,5 @@ fun AppBasicBackgroundLayoutPreview() {
             shadowOffset = 10.dp,
             borderWidth = 2.2.dp
         )
-    }
-}
-
-@Preview(showBackground = true, name = "PixelLoadingScreen")
-@Composable
-fun PixelLoadingScreenPreview() {
-    ZenithPawTheme {
-        PixelLoadingScreen(isVisible = true, onAnimationFinished = {})
     }
 }

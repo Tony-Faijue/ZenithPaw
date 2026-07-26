@@ -1,4 +1,4 @@
-package com.example.zenithpaw.ui.uiscreens
+package com.example.zenithpaw.ui.uiscreens.registerscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

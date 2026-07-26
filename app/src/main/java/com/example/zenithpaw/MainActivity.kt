@@ -4,18 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.zenithpaw.ui.navigation.Screen
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
-import com.example.zenithpaw.ui.uiscreens.MainScreenContent
-import com.example.zenithpaw.ui.uiscreens.PixelLoadingScreen
-import com.example.zenithpaw.ui.uiscreens.pixelcomposables.SpriteSheetAnimation
+import com.example.zenithpaw.ui.uiscreens.mainscreen.MainScreenContent
 import com.example.zenithpaw.ui.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,9 +24,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ZenithPawTheme {
-                MainScreen()
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = Screen.Main.route){
+                    // Navigation graph for the app
+                    composable(route = Screen.Main.route){}
+                    composable(route = Screen.Registration.route){}
+                    composable(route = Screen.Login.route){}
+                    composable(route = Screen.Profile.route){}
+                    composable(route = Screen.Shop.route){}
+                    composable(route = Screen.Task.route){}
+                    composable(route = Screen.TaskDetails.route){}
+                    composable(route = Screen.Pets.route){}
+                    composable(route = Screen.PetDetails.route){}
+                }
+//              MainScreen()
 //              PixelLoadingScreen(true, {})
-//                SpriteSheetAnimation(R.drawable.cat_run_jump, 3, modifier = Modifier.size(width = 200.dp, height = 150.dp, ))
+//              SpriteSheetAnimation(R.drawable.cat_run_jump, 3, modifier = Modifier.size(width = 200.dp, height = 150.dp, ))
             }
         }
     }

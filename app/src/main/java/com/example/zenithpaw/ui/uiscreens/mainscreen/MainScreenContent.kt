@@ -1,15 +1,14 @@
-package com.example.zenithpaw.ui.uiscreens
+package com.example.zenithpaw.ui.uiscreens.mainscreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uievents.UserUiEvent
+import com.example.zenithpaw.ui.uiscreens.registerscreen.RegisterUserDialog
 import com.example.zenithpaw.ui.user.UserUiState
 
 /**
@@ -41,5 +40,16 @@ fun MainScreenContent(
                 text = "Sample Main Screen, Hello ${uiState.name}!"
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Main Screen")
+@Composable
+fun MainScreenPreview() {
+    ZenithPawTheme(dynamicColor = false) {
+        MainScreenContent(
+            uiState = UserUiState(isLoading = false, name = "John", email = "john@example.com"),
+            onEvent = {}
+        )
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -32,6 +33,7 @@ import coil3.request.allowHardware
 import coil3.request.bitmapConfig
 import coil3.request.crossfade
 import com.example.zenithpaw.R
+import com.example.zenithpaw.ui.theme.ZenithPawTheme
 
 @Composable
 fun PixelLoadingScreen(
@@ -100,5 +102,13 @@ fun PixelLoadingScreen(
                 fontFamily = FontFamily.Monospace
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "PixelLoadingScreen")
+@Composable
+fun PixelLoadingScreenPreview() {
+    ZenithPawTheme {
+        PixelLoadingScreen(isVisible = true, onAnimationFinished = {})
     }
 }

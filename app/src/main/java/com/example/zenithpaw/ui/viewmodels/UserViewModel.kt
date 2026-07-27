@@ -7,6 +7,7 @@ import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
 import com.example.zenithpaw.roomdatabase.user.User
 import com.example.zenithpaw.roomdatabase.user.UserRepository
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
+import com.example.zenithpaw.ui.navigation.Screen
 import com.example.zenithpaw.ui.uievents.UserUiEvent
 import com.example.zenithpaw.ui.user.UserUiState
 import com.example.zenithpaw.ui.user.toEntity
@@ -34,7 +35,7 @@ class UserViewModel @Inject constructor(
     private val userInventoryItemRepository: UserInventoryItemRepository,
     private val shopItemRepository: ShopItemRepository,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
-): ViewModel() {
+): BaseViewModel() {
     //Single source of truth for UI state
     private val _uiState = MutableStateFlow(UserUiState(isLoading = true)) //loading user state first
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
@@ -126,22 +127,27 @@ class UserViewModel @Inject constructor(
             is UserUiEvent.OnEmailChange -> {_uiState.update { it.copy(email = event.email) }}
             is UserUiEvent.OnChangeProfileImage -> {_uiState.update { it.copy(imageUrl = event.imageUrl) }}
 
-            //Protected Actions allowed only if user exists
-            else -> {
-                //If the user data is not loaded yet, stop events
-                if(_uiState.value.userId.isEmpty()) return
-                //Map each event to the appropriate function
-                when (event){
-                    //Database persistence actions
-                    UserUiEvent.OnSaveProfileClicked -> onSaveProfileClicked() // Will save all the changes for User Data
-                    UserUiEvent.OnSyncCloudClicked -> onSyncCloudClicked()
-                    UserUiEvent.OnDeleteAccountClicked -> onDeleteAccountClicked()
+            //Dialog actions
+            UserUiEvent.OnShowRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = true) }}
+            UserUiEvent.OnHideRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = false) }}
 
-                    //Dialog actions
-                    UserUiEvent.OnShowRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = true) }}
-                    UserUiEvent.OnHideRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = false) }}
-                    else -> { } //Do nothing
-                }
+            //Navigation actions
+            UserUiEvent.OnBackClicked -> onBackClicked()
+            UserUiEvent.OnStartButtonClicked -> onStartButtonClicked()
+
+            //Protected Database Actions only allowed if user exist
+            //when the user data is not loaded yet, stop event
+            UserUiEvent.OnSaveProfileClicked -> {
+                if(_uiState.value.userId.isEmpty()) return
+                onSaveProfileClicked()
+            }
+            UserUiEvent.OnSyncCloudClicked -> {
+                if(_uiState.value.userId.isEmpty()) return
+                onSyncCloudClicked()
+            }
+            UserUiEvent.OnDeleteAccountClicked -> {
+                if(_uiState.value.userId.isEmpty()) return
+                onDeleteAccountClicked()
             }
         }
     }
@@ -205,4 +211,28 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Navigate to the registration or login screen
+     */
+    fun onStartButtonClicked(){
+        if (uiState.value.isRegistered){
+            navigateTo(Screen.Login.route)
+        } else {
+            navigateTo(Screen.Registration.route)
+        }
+    }
+
+    /**
+     * Navigate to the profile screen after a successful login
+     */
+    fun onLoginSuccess(){
+        navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Login.route, inclusive = true)
+    }
+
+    /**
+     * Navigate back to the previous screen
+     */
+    fun onBackClicked(){
+        navigateBack()
+    }
 }

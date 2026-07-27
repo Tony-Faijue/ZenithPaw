@@ -9,11 +9,11 @@ public sealed class Screen (val route: String) {
     object Profile: Screen("profile")
     object Task: Screen("tasks")
     object TaskDetails: Screen("task_details/{taskId}"){
-        fun passId(id: String) = "tasks/$id"
+        fun passId(id: String) = "tasks_details/$id"
     }
     object Pets: Screen("pets")
     object PetDetails: Screen("pet_details/{petId}"){
-        fun passId(id: String) = "pets/$id"
+        fun passId(id: String) = "pets_details/$id"
     }
     object Registration: Screen("registration")
     object Login: Screen("login")

@@ -11,7 +11,10 @@ sealed interface UserUiEvent {
     object OnDeleteAccountClicked : UserUiEvent
     object OnShowRegisterDialogClicked : UserUiEvent
     object OnHideRegisterDialogClicked : UserUiEvent
+    object OnShowLoginDialogClicked : UserUiEvent
+    object OnHideLoginDialogClicked : UserUiEvent
     object OnStartButtonClicked : UserUiEvent
     object OnBackClicked : UserUiEvent
     data class OnCreateAccountClicked(val name: String, val email: String) : UserUiEvent
+    data class OnLoginClicked(val email: String) : UserUiEvent
 }

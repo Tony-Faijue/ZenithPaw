@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -127,9 +128,15 @@ class UserViewModel @Inject constructor(
             is UserUiEvent.OnEmailChange -> {_uiState.update { it.copy(email = event.email) }}
             is UserUiEvent.OnChangeProfileImage -> {_uiState.update { it.copy(imageUrl = event.imageUrl) }}
 
+            // Login for existing users
+            is UserUiEvent.OnLoginClicked -> {
+                onLoginClicked(event.email)
+            }
             //Dialog actions
             UserUiEvent.OnShowRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = true) }}
             UserUiEvent.OnHideRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = false) }}
+            UserUiEvent.OnShowLoginDialogClicked -> {_uiState.update { it.copy(isLoggingInDialogVisible = true) }}
+            UserUiEvent.OnHideLoginDialogClicked -> {_uiState.update { it.copy(isLoggingInDialogVisible = false) }}
 
             //Navigation actions
             UserUiEvent.OnBackClicked -> onBackClicked()
@@ -200,14 +207,25 @@ class UserViewModel @Inject constructor(
     }
 
     /**
-     * Sync the user data with the cloud
+     * Sync the user data with the cloud.
+     * Pushes local Room database changes to the cloud
+     * and Pull from the cloud to update the Room database
      */
     private fun onSyncCloudClicked(){
         viewModelScope.launch {
-            //1. Get the current user
+            // Show loading state and clear error message
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            //Get the current user
             val currentUser = _uiState.value.toEntity()
-            //2. Sync the user data with the cloud
-            //Code to sync the data
+
+            // Push changes to the cloud based on currentUser
+            // Pull changes from the cloud based on received data to updatedUser
+
+            val updatedUser = currentUser.copy(lastLogin = System.currentTimeMillis())
+            userRepository.upsertUser(updatedUser)
+
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -223,10 +241,27 @@ class UserViewModel @Inject constructor(
     }
 
     /**
-     * Navigate to the profile screen after a successful login
+     * Navigate to the profile screen if the login is successful
+     * otherwise update the error message
+     * @param email the email entered to be verified for authentication
      */
-    fun onLoginSuccess(){
-        navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Login.route, inclusive = true)
+    fun onLoginClicked(email: String){
+        viewModelScope.launch {
+            // Show loading state and clear error message
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            // Verify the email against the local database (Replace with cloud-based verification)
+            val users = userRepository.getUsers().firstOrNull()
+            val existingUser = users?.find { it.email == email }
+
+            // If the user exists, navigate to the profile screen
+            if (existingUser != null) {
+                _uiState.update { it.copy(isLoading = false, isLoggingInDialogVisible = false) }
+                navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Login.route, inclusive = true)
+            } else {
+                _uiState.update { it.copy(isLoading = false, errorMessage = "User not found", isLoggingInDialogVisible = false)}
+            }
+        }
     }
 
     /**

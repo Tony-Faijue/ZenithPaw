@@ -39,7 +39,8 @@ fun MainScreenContent(
                 onClick = { if (uiState.isLoading) {return@AppButton} else onEvent(UserUiEvent.OnStartButtonClicked) },
                 shadowColor = Color.Black,
                 shadowOffset = 12.dp,
-                modifier = Modifier.size(250.dp, 100.dp)
+                modifier = Modifier.size(250.dp, 100.dp),
+                textStyle = MaterialTheme.typography.titleLarge,
             )
         }
     }

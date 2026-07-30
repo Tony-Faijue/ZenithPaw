@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.zenithpaw.ui.navigation.Screen
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uievents.NavigationEvent
+import com.example.zenithpaw.ui.uiscreens.loginscreen.LoginScreenContent
 import com.example.zenithpaw.ui.uiscreens.mainscreen.MainScreenContent
 import com.example.zenithpaw.ui.uiscreens.registerscreen.RegisterScreenContent
 import com.example.zenithpaw.ui.viewmodels.UserViewModel
@@ -29,35 +31,35 @@ class MainActivity : ComponentActivity() {
             ZenithPawTheme {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = Screen.Main.route){
+
+                    val navigateAction: (String, String?, Boolean) -> Unit = { route, popUpToRoute, inclusive ->
+                        navController.navigate(route){
+                            popUpToRoute?.let { popRoute ->
+                                popUpTo(popRoute){ this.inclusive = inclusive
+                                }
+                            }
+                        }
+                    }
                     // Navigation graph for the app
                     composable(route = Screen.Main.route){
                         MainScreen(
-                            onNavigate = { route, popUpToRoute, inclusive ->
-                                navController.navigate(route){
-                                    popUpToRoute?.let { popRoute ->
-                                        popUpTo(popRoute){ this.inclusive = inclusive
-                                        }
-                                    }
-                                }
-                            },
+                            onNavigate = navigateAction,
                             onNavigateBack = { navController.popBackStack() }
                         )
                     }
                     composable(route = Screen.Registration.route){
                         RegistrationScreen(
-                            onNavigate = { route, popUpToRoute, inclusive ->
-                                navController.navigate(route){
-                                    popUpToRoute?.let { popRoute ->
-                                        popUpTo(popRoute){ this.inclusive = inclusive
-                                        }
-                                    }
-                                }
-                            },
+                            onNavigate = navigateAction,
                             onNavigateBack = { navController.popBackStack() }
                         )
                     }
-                    composable(route = Screen.Login.route){}
-                    composable(route = Screen.Profile.route){}
+                    composable(route = Screen.Login.route){
+                        LoginScreen(
+                            onNavigate = navigateAction,
+                            onNavigateBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable(route = Screen.Profile.route){Text("Profile")}
                     composable(route = Screen.Shop.route){}
                     composable(route = Screen.Task.route){}
                     composable(route = Screen.TaskDetails.route){}
@@ -109,4 +111,20 @@ fun RegistrationScreen(viewModel: UserViewModel = hiltViewModel(), onNavigate: (
     }
 
     RegisterScreenContent(uiState = uiState, onEvent = viewModel::onEvent)
+}
+
+@Composable
+fun LoginScreen(viewModel: UserViewModel = hiltViewModel(), onNavigate: (String, String?, Boolean) -> Unit, onNavigateBack: () -> Unit){
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(viewModel.navigationEvent){
+        viewModel.navigationEvent.collect{event ->
+            when(event){
+                is NavigationEvent.Navigate -> onNavigate(event.route, event.popUpToRoute, event.inclusive)
+                is NavigationEvent.NavigateBack -> onNavigateBack()
+            }
+        }
+    }
+
+    LoginScreenContent(uiState = uiState, onEvent = viewModel::onEvent)
 }

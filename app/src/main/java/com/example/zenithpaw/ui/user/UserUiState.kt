@@ -9,8 +9,6 @@ data class UserUiState(
     val gold: Int = 0,
     val inventory: List<UserInventoryItemUiState> = emptyList(),
     val isLoading: Boolean = false,
-    val isRegisteringDialogVisible: Boolean = false, //state of registration with dialog
-    val isLoggingInDialogVisible: Boolean = false, //state of login with dialog
     val errorMessage: String? = null,
     // Text field states that are editable
     val name: String = "",

@@ -43,7 +43,7 @@ fun RegisterUserDialog(
 ){
     Dialog(
         onDismissRequest = {
-            onEvent(UserUiEvent.OnHideRegisterDialogClicked)
+            onEvent(UserUiEvent.OnBackClicked)
         },
         // Turns off Dialog width constraints to allow neobrutal offsets making sure they are not clipped
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -85,7 +85,7 @@ fun RegisterUserDialog(
                             Spacer(modifier = Modifier.size(8.dp))
                             Text("Create Account", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
                         }
-                        IconButton(onClick = { onEvent(UserUiEvent.OnHideRegisterDialogClicked) }) {
+                        IconButton(onClick = { onEvent(UserUiEvent.OnBackClicked) }) {
                             Icon(painterResource(R.drawable.xmark_solid_full), contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurface)
                         }
                     }
@@ -122,8 +122,6 @@ fun RegisterUserDialog(
                         onClick = {
                             //Create account
                             onEvent(UserUiEvent.OnCreateAccountClicked(state.name, state.email))
-                            //Hide the dialog
-                            onEvent(UserUiEvent.OnHideRegisterDialogClicked)
                         },
                         modifier = Modifier.fillMaxWidth().height(48.dp),
                         textStyle = TextStyle(fontSize = 18.sp),

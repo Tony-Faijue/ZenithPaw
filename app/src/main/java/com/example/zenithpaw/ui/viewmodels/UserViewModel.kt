@@ -132,11 +132,6 @@ class UserViewModel @Inject constructor(
             is UserUiEvent.OnLoginClicked -> {
                 onLoginClicked(event.email)
             }
-            //Dialog actions
-            UserUiEvent.OnShowRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = true) }}
-            UserUiEvent.OnHideRegisterDialogClicked -> {_uiState.update { it.copy(isRegisteringDialogVisible = false) }}
-            UserUiEvent.OnShowLoginDialogClicked -> {_uiState.update { it.copy(isLoggingInDialogVisible = true) }}
-            UserUiEvent.OnHideLoginDialogClicked -> {_uiState.update { it.copy(isLoggingInDialogVisible = false) }}
 
             //Navigation actions
             UserUiEvent.OnBackClicked -> onBackClicked()
@@ -190,8 +185,9 @@ class UserViewModel @Inject constructor(
             )
             //Save to the database
             userRepository.upsertUser(newUser)
-            //Close the register dialog
-            _uiState.update { it.copy(isRegisteringDialogVisible = false)}
+
+            //Navigate to the profile screen
+            navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Registration.route, inclusive = true)
         }
     }
 
@@ -256,10 +252,10 @@ class UserViewModel @Inject constructor(
 
             // If the user exists, navigate to the profile screen
             if (existingUser != null) {
-                _uiState.update { it.copy(isLoading = false, isLoggingInDialogVisible = false) }
+                _uiState.update { it.copy(isLoading = false) }
                 navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Login.route, inclusive = true)
             } else {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "User not found", isLoggingInDialogVisible = false)}
+                _uiState.update { it.copy(isLoading = false, errorMessage = "User not found")}
             }
         }
     }

@@ -187,7 +187,7 @@ class UserViewModel @Inject constructor(
             userRepository.upsertUser(newUser)
 
             //Navigate to the profile screen
-            navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Registration.route, inclusive = true)
+            navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Main.route, inclusive = true)
         }
     }
 
@@ -253,7 +253,7 @@ class UserViewModel @Inject constructor(
             // If the user exists, navigate to the profile screen
             if (existingUser != null) {
                 _uiState.update { it.copy(isLoading = false) }
-                navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Login.route, inclusive = true)
+                navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Main.route, inclusive = true)
             } else {
                 _uiState.update { it.copy(isLoading = false, errorMessage = "User not found")}
             }

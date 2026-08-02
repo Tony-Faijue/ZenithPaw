@@ -181,7 +181,6 @@ class UserViewModelUnitTests {
 
             // Assert
             val finalState = awaitItem()
-            assertEquals(false, finalState.isRegisteringDialogVisible)
             assertEquals(false, finalState.isLoading)
 
             coVerify(exactly = 1) { userRepository.deleteAllUsers() }

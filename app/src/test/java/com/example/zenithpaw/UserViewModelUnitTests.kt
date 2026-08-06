@@ -1,5 +1,6 @@
 package com.example.zenithpaw
 
+import androidx.compose.runtime.MutableState
 import app.cash.turbine.test
 import com.example.zenithpaw.roomdatabase.shopitem.ShopItem
 import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
@@ -300,4 +301,103 @@ class UserViewModelUnitTests {
             coVerify(exactly = 1) { userRepository.deleteUser(any()) }
         }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when user syncs data from the cloud, the UI is updated with user data from the cloud`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
+        val testUsers = listOf(testUser)
+        val userFlow = MutableStateFlow(testUsers)
+
+        every { userRepository.getUsers() } returns userFlow
+
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(testUser.userId) } returns flowOf(emptyList())
+        every { shopItemRepository.getShopItems() } returns flowOf(emptyList())
+
+        // define the work that should be done when the user syncs data from the cloud
+        coEvery { userRepository.upsertUser(any()) } answers {
+            val updatedUser = it.invocation.args[0] as User // the updated user created by the ViewModel
+            userFlow.value = listOf(updatedUser)
+        }
+
+        val viewModel = UserViewModel(userRepository, userInventoryItemRepository, shopItemRepository, testDispatcher)
+
+        viewModel.uiState.test{
+            awaitItem()
+
+            val loadedState = awaitItem()
+            assertEquals(testUser.name, loadedState.name)
+            assertEquals(500L, loadedState.lastLogin)
+
+            // Act -> Sync data from the cloud
+            viewModel.onEvent(UserUiEvent.OnSyncCloudClicked)
+
+            val syncState = awaitItem()
+            assert(syncState.isLoading)
+
+            val userCloudUpdateState = awaitItem()
+            assertNotEquals(testUser.lastLogin, userCloudUpdateState.lastLogin)
+            assertEquals(false, userCloudUpdateState.isLoading)
+
+            coVerify(exactly = 1){userRepository.upsertUser(any())}
+        }
+    }
+
+    @Test
+    fun `when login clicked and user does not exists, error message User Account does not exist is shown`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
+        val testUsers = listOf(testUser)
+
+        every { userRepository.getUsers() } returns flowOf(testUsers)
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(testUser.userId) } returns flowOf(emptyList())
+        every { shopItemRepository.getShopItems() } returns flowOf(emptyList())
+
+        val viewModel = UserViewModel(userRepository, userInventoryItemRepository, shopItemRepository, testDispatcher)
+
+        viewModel.uiState.test {
+            awaitItem()
+            val loadedState = awaitItem()
+            assertEquals(testUser.name, loadedState.name)
+
+            // Act -> Login with a non-existent user
+            viewModel.onEvent(UserUiEvent.OnLoginClicked("testuser@example.com"))
+            awaitItem()
+
+            // Assert
+            val errorState = awaitItem()
+            assertEquals("User Account does not exist", errorState.errorMessage)
+            assertEquals(false, errorState.isLoading)
+        }
+    }
+
+    @Test
+    fun `when login clicked and user does exist, error message is null`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
+        val testUsers = listOf(testUser)
+
+        every { userRepository.getUsers() } returns flowOf(testUsers)
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(testUser.userId) } returns flowOf(emptyList())
+        every { shopItemRepository.getShopItems() } returns flowOf(emptyList())
+
+        val viewModel = UserViewModel(userRepository, userInventoryItemRepository, shopItemRepository, testDispatcher)
+
+        viewModel.uiState.test {
+            awaitItem()
+            val loadedState = awaitItem()
+            assertEquals(testUser.name, loadedState.name)
+
+            // Act -> Login with a non-existent user
+            viewModel.onEvent(UserUiEvent.OnLoginClicked(testUser.email))
+            awaitItem()
+
+            // Assert
+            val errorState = awaitItem()
+            assertEquals(null, errorState.errorMessage)
+            assertEquals(false, errorState.isLoading)
+        }
+    }
+
 }

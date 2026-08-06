@@ -220,8 +220,6 @@ class UserViewModel @Inject constructor(
 
             val updatedUser = currentUser.copy(lastLogin = System.currentTimeMillis())
             userRepository.upsertUser(updatedUser)
-
-            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -255,7 +253,7 @@ class UserViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false) }
                 navigateTo(route = Screen.Profile.route, popUpToRoute = Screen.Main.route, inclusive = true)
             } else {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "User not found")}
+                _uiState.update { it.copy(isLoading = false, errorMessage = "User Account does not exist")}
             }
         }
     }

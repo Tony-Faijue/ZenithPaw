@@ -159,6 +159,7 @@ fun ProfileCardPreview() {
     ZenithPawTheme(dynamicColor = false) {
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             val myAvatarImage: ImageBitmap = ImageBitmap.imageResource(R.drawable.cat_run_jump)
+            val exampleGold = 150
             ProfileCard(
                 title = "John Doe",
                 subtitle = "JohnDoe@example.com",
@@ -172,7 +173,7 @@ fun ProfileCardPreview() {
                     ){
                         Row(){
                             Text("Gold:")
-                            Text("150")
+                            Text(exampleGold.toString())
                         }
                     }
                 },

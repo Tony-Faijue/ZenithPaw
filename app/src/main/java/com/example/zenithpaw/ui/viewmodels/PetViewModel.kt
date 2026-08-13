@@ -2,6 +2,7 @@ package com.example.zenithpaw.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.zenithpaw.roomdatabase.DefaultDispatcher
 import com.example.zenithpaw.roomdatabase.pet.PetRepository
 import com.example.zenithpaw.roomdatabase.pet.PetState
 import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
@@ -14,6 +15,7 @@ import com.example.zenithpaw.ui.pet.toPetUiState
 import com.example.zenithpaw.ui.uievents.PetUiEvent
 import com.example.zenithpaw.ui.userinventoryitem.UserInventoryItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,7 +34,8 @@ class PetViewModel @Inject constructor(
     private val petRepository: PetRepository,
     private val shopItemRepository: ShopItemRepository,
     private val userRepository: UserRepository,
-    private val userInventoryItemRepository: UserInventoryItemRepository
+    private val userInventoryItemRepository: UserInventoryItemRepository,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ): ViewModel(){
     private val _uiState = MutableStateFlow(PetScreenUiState(isLoading = true))
     val uiState: StateFlow<PetScreenUiState> = _uiState.asStateFlow()
@@ -91,7 +95,8 @@ class PetViewModel @Inject constructor(
                             )
                         }
                     }
-                }.collect { newState ->
+                }   .flowOn(defaultDispatcher) //Run on the default dispatcher since simple transform/filter operations
+                    .collect { newState ->
                     _uiState.value = newState
                 }
         }

@@ -2,6 +2,7 @@ package com.example.zenithpaw.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.zenithpaw.roomdatabase.DefaultDispatcher
 import com.example.zenithpaw.roomdatabase.task.Task
 import com.example.zenithpaw.roomdatabase.task.TaskRepository
 import com.example.zenithpaw.roomdatabase.task.TaskState
@@ -11,6 +12,7 @@ import com.example.zenithpaw.ui.task.toEntity
 import com.example.zenithpaw.ui.task.toTaskUiState
 import com.example.zenithpaw.ui.uievents.TaskUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,7 +32,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow(TaskScreenUiState(isLoading = true))
@@ -83,7 +87,8 @@ class TaskViewModel @Inject constructor(
                             selectedTask = updateSelection
                         )
                     } }
-                }.collect { newState ->
+                }   .flowOn(defaultDispatcher) //Run on the default dispatcher since simple transform/filter operations
+                    .collect { newState ->
                     _uiState.value = newState
                 }
         }

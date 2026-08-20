@@ -81,6 +81,8 @@ class ShopViewModel @Inject constructor(
                 .flatMapLatest { shops ->
                     val shop = shops.firstOrNull()
                     if (shop == null ){
+                        //No shop found
+                        _uiState.update { it.copy(errorMessage = "No Shop Found", isLoading = false) }
                         flowOf(emptyList<ShopItemUiState>())
                     } else {
                         // Update the state with the shopId
@@ -97,6 +99,7 @@ class ShopViewModel @Inject constructor(
                                         imageUrl = item.imageUrl,
                                         price = item.price,
                                         description = item.description,
+                                        shopId = item.shopId,
                                     )
                                 }
                             }
@@ -111,7 +114,7 @@ class ShopViewModel @Inject constructor(
         }
     }
 
-    private fun onEvent(event: ShopUiEvent){
+    fun onEvent(event: ShopUiEvent){
         if (_uiState.value.shopId.isEmpty()) return //If the shopId is not loaded yet, stop events
         when (event){
             // User selects and item to preview
@@ -138,6 +141,7 @@ class ShopViewModel @Inject constructor(
      */
     private fun onBuyItemClicked(shopItemId: String){
         viewModelScope.launch{
+            val shopItemName = shopItemRepository.getShopItemById(shopItemId).name
             //Shop item price
             val price = shopItemRepository.getShopItemById(shopItemId).price
 
@@ -147,7 +151,7 @@ class ShopViewModel @Inject constructor(
 
             //If no user is found, return
             if (currentUser == null) {
-                _uiState.update { it.copy(errorMessage = "No User Found: When Buying ShopItem") }
+                _uiState.update { it.copy(errorMessage = "No User Found: When Buying: $shopItemName") }
                 return@launch
             }
 
@@ -155,7 +159,7 @@ class ShopViewModel @Inject constructor(
 
             //User does not enough have gold
             if (price > balance) {
-                _uiState.update { it.copy(errorMessage = "Not Enough Gold: When Buying ShopItem") }
+                _uiState.update { it.copy(errorMessage = "Not Enough Gold: When Buying: $shopItemName, with Balance: $$balance") }
             }
             // User has enough gold to buy the item; Perform the Transaction
             else {
@@ -192,28 +196,26 @@ class ShopViewModel @Inject constructor(
      * Preview the shop item in the UI state
      */
     private fun onPreviewItemClicked(shopItemId: String){
-        if (selectItem(shopItemId)){
-            _uiState.update { it.copy(isPreviewVisible = true) }
-        }
+         selectItem(shopItemId) { it.copy(isPreviewVisible = true) }
     }
 
     /**
      * Show the buying confirmation dialog
      */
     private fun onBuyInitiated(shopItemId: String){
-        if (selectItem(shopItemId)){
-            _uiState.update { it.copy(isBuyingVisible = true) }
-        }
+        selectItem(shopItemId) { it.copy(isBuyingVisible = true) }
     }
 
     /**
-     * Updates the selected item in the UI state
+     * Updates the selected item in the UI state and applies additional state changes
      * returns true if the item was found and selected, false otherwise
      */
-    private fun selectItem(shopItemId: String): Boolean{
+    private fun selectItem(shopItemId: String, updateVisibility: (ShopUiState) -> ShopUiState): Boolean{
         val item = _uiState.value.availableItems.find { it.shopItemId == shopItemId }
         if (item != null){
-            _uiState.update { it.copy(selectedItem = item, errorMessage = null) }
+            _uiState.update { currentState ->
+                updateVisibility(currentState.copy(selectedItem = item, errorMessage = null))
+            }
             return true
         }
         return false

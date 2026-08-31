@@ -132,7 +132,7 @@ class ShopViewModel @Inject constructor(
             //Dialog Dismiss Actions
             //--set select item to null after cancellation--
             ShopUiEvent.OnDismissPreviewDialogClicked -> _uiState.update { it.copy(isPreviewVisible = false, selectedItem = null) }
-            ShopUiEvent.OnDismissConfirmBuyDialogClicked -> _uiState.update { it.copy(isBuyingVisible = false) }
+            ShopUiEvent.OnDismissConfirmBuyDialogClicked -> _uiState.update { it.copy(isBuyingVisible = false, selectedItem = null) }
         }
     }
 

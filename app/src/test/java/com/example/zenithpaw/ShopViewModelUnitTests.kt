@@ -462,5 +462,112 @@ class ShopViewModelUnitTests {
             assertEquals("Not Enough Gold: When Buying: ${shopItem.name}, with Balance: $${testUser.gold}", errorState.errorMessage)
         }
     }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when preview dialog is dismissed, isPreviewVisible is False and selectedItem is null`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+        val userFlow = flowOf(listOf(testUser))
+
+        val shop = Shop("shop_id_1", "shop_name_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItems = listOf(shopItem, shopItem2)
+
+        every { userRepository.getUsers() } returns userFlow
+        every { shopRepository.getShops() } returns flowOf(listOf(shop))
+        every { shopItemRepository.getShopItemsByShopId(shop.shopId)} returns flowOf(shopItems)
+
+        val viewModel = ShopViewModel(
+            shopRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        // Act
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+
+            // initial the gold state
+            awaitItem()
+
+            // initial shop state
+            awaitItem()
+
+            // load shop items state
+            awaitItem()
+
+            // Act: Select item to preview
+            viewModel.onEvent(ShopUiEvent.OnPreviewItemClicked(shopItem.shopItemId))
+
+            val previewItemState = awaitItem()
+            assertEquals(true, previewItemState.isPreviewVisible)
+            assertEquals(shopItem.shopItemId, previewItemState.selectedItem?.shopItemId)
+
+            // Act: Dismiss the preview item dialog
+            viewModel.onEvent(ShopUiEvent.OnDismissPreviewDialogClicked)
+
+            val dismissDialogState = awaitItem()
+            assertEquals(false, dismissDialogState.isPreviewVisible)
+            assertEquals(null, dismissDialogState.selectedItem)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when buy dialog is dismissed, isBuyingVisible is False and selectedItem is null`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+        val userFlow = flowOf(listOf(testUser))
+
+        val shop = Shop("shop_id_1", "shop_name_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItems = listOf(shopItem, shopItem2)
+
+        every { userRepository.getUsers() } returns userFlow
+        every { shopRepository.getShops() } returns flowOf(listOf(shop))
+        every { shopItemRepository.getShopItemsByShopId(shop.shopId)} returns flowOf(shopItems)
+
+        val viewModel = ShopViewModel(
+            shopRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        // Act
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+
+            // initial the gold state
+            awaitItem()
+
+            // initial shop state
+            awaitItem()
+
+            // load shop items state
+            awaitItem()
+
+            // Act: show confirm buy dialog
+            viewModel.onEvent(ShopUiEvent.OnShowConfirmBuyDialogClicked(shopItem.shopItemId))
+
+            val buyDialogState = awaitItem()
+            assertEquals(true, buyDialogState.isBuyingVisible)
+            assertEquals(shopItem.shopItemId, buyDialogState.selectedItem?.shopItemId)
+
+            // Act: Dismiss the confirm buy dialog
+            viewModel.onEvent(ShopUiEvent.OnDismissConfirmBuyDialogClicked)
+
+            val dismissDialogState = awaitItem()
+            assertEquals(false, dismissDialogState.isBuyingVisible)
+            assertEquals(null, dismissDialogState.selectedItem)
+        }
+    }
 
 }

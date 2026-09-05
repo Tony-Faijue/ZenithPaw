@@ -115,7 +115,10 @@ class ShopViewModel @Inject constructor(
     }
 
     fun onEvent(event: ShopUiEvent){
-        if (_uiState.value.shopId.isEmpty()) return //If the shopId is not loaded yet, stop events
+        if (_uiState.value.shopId.isEmpty()) {
+            _uiState.update { it.copy(errorMessage = "Shop data not loaded yet", isLoading = true) }
+            return //If the shopId is not loaded yet, stop events
+        }
         when (event){
             // User selects and item to preview
             is ShopUiEvent.OnPreviewItemClicked -> onPreviewItemClicked(event.shopItemId)

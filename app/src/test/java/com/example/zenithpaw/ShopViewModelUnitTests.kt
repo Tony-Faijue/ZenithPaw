@@ -570,4 +570,43 @@ class ShopViewModelUnitTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when shop data is not loaded, cannot perform ShopUiEvents`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+        val userFlow = flowOf(listOf(testUser))
+
+        every { userRepository.getUsers() } returns userFlow
+        every { shopRepository.getShops() } returns flowOf(emptyList())
+        every { shopItemRepository.getShopItemsByShopId(any()) } returns flowOf(emptyList())
+
+        val viewModel = ShopViewModel(
+            shopRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        // Act
+        viewModel.uiState.test {
+            // Initial state
+            awaitItem()
+            // Gold balance state
+            awaitItem()
+            // Error state
+            val errorState = awaitItem()
+            assertEquals("No Shop Found", errorState.errorMessage)
+
+            // Simulate an ShopUiEvent Action
+            viewModel.onEvent(ShopUiEvent.OnPreviewItemClicked(""))
+            // For the shopid value being empty for the event set the error message in the onEvent function
+            //Shop data error state message
+            val shopLoadedState = awaitItem()
+            assertEquals("Shop data not loaded yet", shopLoadedState.errorMessage)
+            assertEquals(true, shopLoadedState.isLoading)
+        }
+    }
+
 }

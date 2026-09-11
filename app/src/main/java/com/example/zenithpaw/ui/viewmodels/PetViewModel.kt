@@ -59,7 +59,7 @@ class PetViewModel @Inject constructor(
                 }.flatMapLatest { users ->
                     val currentUser = users.firstOrNull()
                     if (currentUser == null){
-                        flowOf(PetScreenUiState(isLoading = false))
+                        flowOf(PetScreenUiState(isLoading = false, errorMessage = "No User Found"))
                     } else {
                         // Observe the pets and the user inventory with shop inventory details
                         combine(
@@ -69,6 +69,10 @@ class PetViewModel @Inject constructor(
                         ){ pets, inventory, shopItems ->
                             // Get the current selected pet
                             val currentSelection = _uiState.value.selectedPet
+                            // Check if pet repository is empty
+                            if (pets.isEmpty()){
+                                return@combine PetScreenUiState(isLoading = false, errorMessage = "No Pets Found")
+                            }
                             val newPetList = pets.map { it.toPetUiState() } // Convert Pet entities to PetUiState
 
                             // If a pet is selected, find the updated version

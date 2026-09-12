@@ -11,6 +11,7 @@ import com.example.zenithpaw.roomdatabase.user.User
 import com.example.zenithpaw.roomdatabase.user.UserRepository
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItem
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
+import com.example.zenithpaw.ui.uievents.PetUiEvent
 import com.example.zenithpaw.ui.viewmodels.PetViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -145,6 +146,112 @@ class PetViewModelUnitTests {
             assertEquals(2, petScreenState.pets.size)
             assertEquals(2, petScreenState.items.size)
             assertEquals(3, petScreenState.items[0].quantity)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when pet is selected, the selectedPet state is set`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+
+        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
+        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+
+        val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
+        val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
+
+        every { userRepository.getUsers() } returns flowOf(listOf(testUser))
+        every { petRepository.getPetsForUser(any()) } returns flowOf(listOf(myPet1, myPet2))
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(any()) } returns flowOf(listOf(myInventoryItem1, myInventoryItem2))
+        every { shopItemRepository.getShopItems() } returns flowOf(listOf(shopItem1, shopItem2))
+
+        val viewModel = PetViewModel(
+            petRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        // Act
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+            // Assert the initial/default pet selected state with initial setup for PetScreenUiState
+            val petScreenState = awaitItem()
+            assertEquals("Rover", petScreenState.selectedPet?.name)
+            assertEquals("pet_id_1", petScreenState.selectedPet?.petId)
+
+            // Select a different pet
+            viewModel.onEvent(PetUiEvent.OnPetSelected(myPet2.petId))
+
+            // selectedPet is updated
+            awaitItem()
+
+            // pet selection dialog visible state
+            val petSelectionDialogState = awaitItem()
+            assertEquals(true, petSelectionDialogState.isPetSelectionDialogVisible)
+
+            // Assert the different pet selection
+            assertEquals("Buddy", petSelectionDialogState.selectedPet?.name)
+            assertEquals("pet_id_2", petSelectionDialogState.selectedPet?.petId)
+            assertEquals(PetType.RABBIT, petSelectionDialogState.selectedPet?.species)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when user inventory item is selected, the selectedItem state is set`() = runTest(testDispatcher) {
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+
+        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
+        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+
+        val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
+        val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
+
+        every { userRepository.getUsers() } returns flowOf(listOf(testUser))
+        every { petRepository.getPetsForUser(any()) } returns flowOf(listOf(myPet1, myPet2))
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(any()) } returns flowOf(listOf(myInventoryItem1, myInventoryItem2))
+        every { shopItemRepository.getShopItems() } returns flowOf(listOf(shopItem1, shopItem2))
+
+        val viewModel = PetViewModel(
+            petRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        // Act
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+            // initial inventory item state with initial setup for PetScreenUiState
+            awaitItem()
+
+            // Select an inventory item pet
+            viewModel.onEvent(PetUiEvent.OnInventoryItemSelected(myInventoryItem1.inventoryItemId))
+
+            // selectedItem is updated
+            awaitItem()
+
+            // item selection dialog visible state
+            val inventoryItemSelectionDialogState = awaitItem()
+            assertEquals(true, inventoryItemSelectionDialogState.isItemSelectionDialogVisible)
+
+            // Assert the inventory item selection
+            assertEquals("Carrot", inventoryItemSelectionDialogState.selectedItem?.name)
+            assertEquals("user_item_1", inventoryItemSelectionDialogState.selectedItem?.inventoryItemId)
+            assertEquals(3, inventoryItemSelectionDialogState.selectedItem?.quantity)
         }
     }
 }

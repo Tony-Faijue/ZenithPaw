@@ -101,7 +101,19 @@ class PetViewModel @Inject constructor(
                     }
                 }   .flowOn(defaultDispatcher) //Run on the default dispatcher since simple transform/filter operations
                     .collect { newState ->
-                    _uiState.value = newState
+                    _uiState.update {currentState ->
+                        // Update the UI state with the new data and prevent overrides of data refreshes
+                        newState.copy(
+                            // UI State flags activated by the User
+                            isNameChangeDialogVisible = currentState.isNameChangeDialogVisible,
+                            isPetSelectionDialogVisible = currentState.isPetSelectionDialogVisible,
+                            isItemSelectionDialogVisible = currentState.isItemSelectionDialogVisible,
+                            // Keep user active selection
+                            selectedItem = currentState.selectedItem,
+                            // newState error message precedes over currentState error message
+                            errorMessage = newState.errorMessage ?: currentState.errorMessage
+                        )
+                    }
                 }
         }
     }

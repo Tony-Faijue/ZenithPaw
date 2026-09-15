@@ -13,10 +13,12 @@ import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItem
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
 import com.example.zenithpaw.ui.uievents.PetUiEvent
 import com.example.zenithpaw.ui.viewmodels.PetViewModel
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -254,4 +256,139 @@ class PetViewModelUnitTests {
             assertEquals(3, inventoryItemSelectionDialogState.selectedItem?.quantity)
         }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when pet name is changed and is blank, error message is 'Pet name cannot be blank'`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+
+        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
+        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+
+        // MutableStateFlow to simulate database changes
+        val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
+
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+
+        val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
+        val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
+
+        every { userRepository.getUsers() } returns flowOf(listOf(testUser))
+
+        // Define the behavior of the suspended functions for database changes
+        every { petRepository.getPetsForUser(any()) } returns petFlow
+
+        // Simulate the database reaction to pet name change
+        coEvery { petRepository.upsertPet(any()) } answers {
+            // changes pet name for the first pet in the list
+            val updatedPet = it.invocation.args[0] as Pet
+            petFlow.value = listOf(updatedPet, myPet2)
+        }
+
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(any()) } returns flowOf(listOf(myInventoryItem1, myInventoryItem2))
+        every { shopItemRepository.getShopItems() } returns flowOf(listOf(shopItem1, shopItem2))
+
+        val viewModel = PetViewModel(
+            petRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+            // initial PetScreenUIState
+            awaitItem()
+
+            // ACT: Show Pet Name Change Dialog
+            viewModel.onEvent(PetUiEvent.OnShowNameChangeDialogClicked)
+            val petNameChangeDialogState = awaitItem()
+            assertEquals(true, petNameChangeDialogState.isNameChangeDialogVisible)
+
+            // Act: Change Pet Name is blank
+            viewModel.onEvent(PetUiEvent.OnSavePetNameClicked("  "))
+
+            // Assert the error state of pet name being blank
+            val errorState = awaitItem()
+            assertEquals("Pet name cannot be blank", errorState.errorMessage)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when pet is selected and name is changed and saved to the database, the pet name is updated in the UI state`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+
+        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
+        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+
+        // MutableStateFlow to simulate database changes
+        val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
+
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+
+        val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
+        val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
+
+        every { userRepository.getUsers() } returns flowOf(listOf(testUser))
+
+        // Define the behavior of the suspended functions for database changes
+        every { petRepository.getPetsForUser(any()) } returns petFlow
+
+        // Simulate the database reaction to pet name change
+        coEvery { petRepository.upsertPet(any()) } answers {
+            // changes pet name for the first pet in the list
+            val updatedPet = it.invocation.args[0] as Pet
+            petFlow.value = listOf(updatedPet, myPet2)
+        }
+
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(any()) } returns flowOf(listOf(myInventoryItem1, myInventoryItem2))
+        every { shopItemRepository.getShopItems() } returns flowOf(listOf(shopItem1, shopItem2))
+
+        val viewModel = PetViewModel(
+            petRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+            // initial PetScreenUIState
+            awaitItem()
+
+            // ACT: Select a pet
+            viewModel.onEvent(PetUiEvent.OnPetSelected(myPet1.petId))
+
+            val petSelectionDialogState = awaitItem()
+            assertEquals(true, petSelectionDialogState.isPetSelectionDialogVisible)
+            assertEquals("pet_id_1", petSelectionDialogState.selectedPet?.petId)
+
+            // ACT: Show Pet Name Change Dialog
+            viewModel.onEvent(PetUiEvent.OnShowNameChangeDialogClicked)
+            val petNameChangeDialogState = awaitItem()
+            assertEquals(true, petNameChangeDialogState.isNameChangeDialogVisible)
+
+            // Act: Change Pet Name is blank
+            viewModel.onEvent(PetUiEvent.OnSavePetNameClicked("Charles"))
+
+            // Assert the PetScreenUI state change
+            val petScreenUiStateRefresh = awaitItem()
+            assertEquals("pet_id_1", petScreenUiStateRefresh.selectedPet?.petId)
+
+            // Assert the PetScreenUI state after the updated change to Pet Repository from pet name change
+            val stateAfterFlowUpdate = awaitItem()
+            assertEquals(false, stateAfterFlowUpdate.isNameChangeDialogVisible)
+            assertEquals("Charles", stateAfterFlowUpdate.selectedPet?.name)
+        }
+    }
+
 }

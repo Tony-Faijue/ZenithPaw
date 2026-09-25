@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +21,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.zenithpaw.roomdatabase.pet.PetState
+import com.example.zenithpaw.roomdatabase.pet.PetType
 import com.example.zenithpaw.ui.navigation.Screen
+import com.example.zenithpaw.ui.pet.PetAnimationMapper
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uievents.NavigationEvent
 import com.example.zenithpaw.ui.uiscreens.AppBottomNavigationItem
@@ -28,6 +32,7 @@ import com.example.zenithpaw.ui.uiscreens.CustomBottomNavigationBarSlot
 import com.example.zenithpaw.ui.uiscreens.NavigationItem
 import com.example.zenithpaw.ui.uiscreens.loginscreen.LoginScreenContent
 import com.example.zenithpaw.ui.uiscreens.mainscreen.MainScreenContent
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.SpriteSheetAnimation
 import com.example.zenithpaw.ui.uiscreens.registerscreen.RegisterScreenContent
 import com.example.zenithpaw.ui.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,6 +99,7 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.PetDetails.route){}
                     }
 //              PixelLoadingScreen(true, {})
+//                SpriteSheetAnimation(PetAnimationMapper().getAnimation(PetType.CAT, PetState.Idle), 8, modifier = Modifier.size(width = 200.dp, height = 150.dp, ))
 //              SpriteSheetAnimation(R.drawable.cat_run_jump, 3, modifier = Modifier.size(width = 200.dp, height = 150.dp, ))
                 }
             }

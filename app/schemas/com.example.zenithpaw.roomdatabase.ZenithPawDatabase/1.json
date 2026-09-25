@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "91dbbfc539db695c150b88a060e007e2",
+    "identityHash": "dca43af359bf869f39e5686459731511",
     "entities": [
       {
         "tableName": "users",
@@ -56,7 +56,7 @@
       },
       {
         "tableName": "pets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `species` TEXT NOT NULL, `isDownloaded` INTEGER NOT NULL, `animationUrl` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `zen` INTEGER NOT NULL, `petState` TEXT NOT NULL, `petId` TEXT NOT NULL, `userId` TEXT NOT NULL, PRIMARY KEY(`petId`), FOREIGN KEY(`userId`) REFERENCES `users`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `species` TEXT NOT NULL, `isDownloaded` INTEGER NOT NULL, `imageUrl` TEXT NOT NULL, `zen` INTEGER NOT NULL, `petState` TEXT NOT NULL, `petId` TEXT NOT NULL, `userId` TEXT NOT NULL, PRIMARY KEY(`petId`), FOREIGN KEY(`userId`) REFERENCES `users`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "name",
@@ -74,12 +74,6 @@
             "fieldPath": "isDownloaded",
             "columnName": "isDownloaded",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "animationUrl",
-            "columnName": "animationUrl",
-            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -349,7 +343,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '91dbbfc539db695c150b88a060e007e2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dca43af359bf869f39e5686459731511')"
     ]
   }
 }

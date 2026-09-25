@@ -115,8 +115,26 @@ class PetViewModelUnitTests {
         // Arrange
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
 
-        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
-        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            isDownloaded = false,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            isDownloaded = false,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
 
         val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
         val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
@@ -157,8 +175,26 @@ class PetViewModelUnitTests {
         // Arrange
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
 
-        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
-        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            isDownloaded = false,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            isDownloaded = false,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
 
         val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
         val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
@@ -211,8 +247,26 @@ class PetViewModelUnitTests {
         // Arrange
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
 
-        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
-        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            isDownloaded = false,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            isDownloaded = false,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
 
         val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
         val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
@@ -263,8 +317,26 @@ class PetViewModelUnitTests {
         // Arrange
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
 
-        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
-        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            isDownloaded = false,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            isDownloaded = false,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
 
         // MutableStateFlow to simulate database changes
         val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
@@ -324,8 +396,26 @@ class PetViewModelUnitTests {
         // Arrange
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
 
-        val myPet1 = Pet("Rover", PetType.CAT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_1", imageUrl = "image_url_1", animationUrl = "animation_url_1", zen = 100)
-        val myPet2 = Pet("Buddy", PetType.RABBIT, isDownloaded = false, petState = PetState.Idle, userId = testUser.userId, petId = "pet_id_2", imageUrl = "image_url_2", animationUrl = "animation_url_2", zen = 80)
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            isDownloaded = false,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            isDownloaded = false,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
 
         // MutableStateFlow to simulate database changes
         val petFlow = MutableStateFlow(listOf(myPet1, myPet2))

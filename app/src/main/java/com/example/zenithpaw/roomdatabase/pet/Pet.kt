@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.example.zenithpaw.roomdatabase.user.User
-import java.util.UUID
 
 @Entity(tableName = "pets", foreignKeys = [
     ForeignKey(
@@ -18,7 +17,6 @@ data class Pet (
     val name: String,
     val species: PetType,
     val isDownloaded: Boolean,
-    val animationUrl: String,
     val imageUrl: String,
     val zen: Int,
     val petState: PetState,

@@ -25,7 +25,6 @@ fun Pet.toPetUiState(): PetUiState{
         name = this.name,
         species = this.species,
         isDownloaded = this.isDownloaded,
-        animationUrl = this.animationUrl,
         imageUrl = this.imageUrl,
         zen = this.zen,
         petState = this.petState,
@@ -38,14 +37,13 @@ fun Pet.toPetUiState(): PetUiState{
  */
 fun PetUiState.toEntity(): Pet {
     return Pet(
-        petId = this.petId,
         name = this.name,
         species = this.species,
         isDownloaded = this.isDownloaded,
-        animationUrl = this.animationUrl,
         imageUrl = this.imageUrl,
         zen = this.zen,
         petState = this.petState,
+        petId = this.petId,
         userId = this.userId,
     )
 }

@@ -17,7 +17,7 @@ import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemDao
 
 @Database(
     entities = [User::class, Pet::class, Task::class, Shop::class, ShopItem::class, UserInventoryItem::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 

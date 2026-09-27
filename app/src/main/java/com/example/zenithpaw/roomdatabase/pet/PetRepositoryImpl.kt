@@ -28,7 +28,4 @@ class PetRepositoryImpl @Inject constructor(private val petDao: PetDao) : PetRep
     override fun getPetsForUser(userId: String): Flow<List<Pet>> {
         return petDao.getPetsForUser(userId)
     }
-    override suspend fun getPetsPendingDownload(): List<Pet> {
-        return petDao.getPetsPendingDownload()
-    }
 }

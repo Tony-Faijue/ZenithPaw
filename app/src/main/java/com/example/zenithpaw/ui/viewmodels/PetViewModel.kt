@@ -212,6 +212,12 @@ class PetViewModel @Inject constructor(
         // Animation logic for pet play
         viewModelScope.launch {
             _uiState.value.selectedPet?.let {pet ->
+                /**
+                 * 1. Check if the pet is already being played with (non-idle state)
+                 * 2. Check if the pet assets are already downloaded ? is this needed?
+                 * 3. Check the type of the pet to determine a random number based on the states for each type
+                 * 3a. Goal is to play a random animation for the pet that is not idle
+                */
                 // For now make pet jump up and down
                 // --Need check if the assets for pet are already downloaded
                 // --Need to setup the animation Url to reference for the jump animation in Compose UI

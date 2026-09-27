@@ -41,8 +41,4 @@ interface PetDao {
     @Query("SELECT * FROM pets WHERE userId = :userId")
     fun getPetsForUser(userId: String): Flow<List<Pet>>
 
-    //Get all pets that are not downloaded yet
-    @Query("SELECT * FROM pets WHERE isDownloaded = 0")
-    suspend fun getPetsPendingDownload(): List<Pet>
-
 }

@@ -8,7 +8,6 @@ data class PetUiState(
     val petId: String = "",
     val name: String = "",
     val species: PetType = PetType.CAT,
-    val isDownloaded: Boolean = false,
     val animationUrl: String = "",
     val imageUrl: String = "",
     val zen: Int = 0,
@@ -24,7 +23,6 @@ fun Pet.toPetUiState(): PetUiState{
         petId = this.petId,
         name = this.name,
         species = this.species,
-        isDownloaded = this.isDownloaded,
         imageUrl = this.imageUrl,
         zen = this.zen,
         petState = this.petState,
@@ -39,7 +37,6 @@ fun PetUiState.toEntity(): Pet {
     return Pet(
         name = this.name,
         species = this.species,
-        isDownloaded = this.isDownloaded,
         imageUrl = this.imageUrl,
         zen = this.zen,
         petState = this.petState,

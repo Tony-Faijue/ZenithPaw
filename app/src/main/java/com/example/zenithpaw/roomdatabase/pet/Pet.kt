@@ -16,7 +16,6 @@ import com.example.zenithpaw.roomdatabase.user.User
 data class Pet (
     val name: String,
     val species: PetType,
-    val isDownloaded: Boolean,
     val imageUrl: String,
     val zen: Int,
     val petState: PetState,

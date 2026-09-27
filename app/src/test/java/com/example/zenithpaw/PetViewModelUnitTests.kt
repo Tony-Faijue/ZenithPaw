@@ -118,7 +118,6 @@ class PetViewModelUnitTests {
         val myPet1 = Pet(
             "Rover",
             PetType.CAT,
-            isDownloaded = false,
             imageUrl = "image_url_1",
             zen = 100,
             petState = PetState.Idle,
@@ -128,7 +127,6 @@ class PetViewModelUnitTests {
         val myPet2 = Pet(
             "Buddy",
             PetType.RABBIT,
-            isDownloaded = false,
             imageUrl = "image_url_2",
             zen = 80,
             petState = PetState.Idle,
@@ -178,7 +176,6 @@ class PetViewModelUnitTests {
         val myPet1 = Pet(
             "Rover",
             PetType.CAT,
-            isDownloaded = false,
             imageUrl = "image_url_1",
             zen = 100,
             petState = PetState.Idle,
@@ -188,7 +185,6 @@ class PetViewModelUnitTests {
         val myPet2 = Pet(
             "Buddy",
             PetType.RABBIT,
-            isDownloaded = false,
             imageUrl = "image_url_2",
             zen = 80,
             petState = PetState.Idle,
@@ -250,7 +246,6 @@ class PetViewModelUnitTests {
         val myPet1 = Pet(
             "Rover",
             PetType.CAT,
-            isDownloaded = false,
             imageUrl = "image_url_1",
             zen = 100,
             petState = PetState.Idle,
@@ -260,7 +255,6 @@ class PetViewModelUnitTests {
         val myPet2 = Pet(
             "Buddy",
             PetType.RABBIT,
-            isDownloaded = false,
             imageUrl = "image_url_2",
             zen = 80,
             petState = PetState.Idle,
@@ -320,7 +314,6 @@ class PetViewModelUnitTests {
         val myPet1 = Pet(
             "Rover",
             PetType.CAT,
-            isDownloaded = false,
             imageUrl = "image_url_1",
             zen = 100,
             petState = PetState.Idle,
@@ -330,7 +323,6 @@ class PetViewModelUnitTests {
         val myPet2 = Pet(
             "Buddy",
             PetType.RABBIT,
-            isDownloaded = false,
             imageUrl = "image_url_2",
             zen = 80,
             petState = PetState.Idle,
@@ -399,7 +391,6 @@ class PetViewModelUnitTests {
         val myPet1 = Pet(
             "Rover",
             PetType.CAT,
-            isDownloaded = false,
             imageUrl = "image_url_1",
             zen = 100,
             petState = PetState.Idle,
@@ -409,7 +400,6 @@ class PetViewModelUnitTests {
         val myPet2 = Pet(
             "Buddy",
             PetType.RABBIT,
-            isDownloaded = false,
             imageUrl = "image_url_2",
             zen = 80,
             petState = PetState.Idle,
@@ -479,6 +469,10 @@ class PetViewModelUnitTests {
             assertEquals(false, stateAfterFlowUpdate.isNameChangeDialogVisible)
             assertEquals("Charles", stateAfterFlowUpdate.selectedPet?.name)
         }
+    }
+
+    fun `when onPlayWithPetClicked is clicked, will set the petState to a random fixed range of petState animations based on petType `() = runTest(testDispatcher){
+        // Related Code
     }
 
 }

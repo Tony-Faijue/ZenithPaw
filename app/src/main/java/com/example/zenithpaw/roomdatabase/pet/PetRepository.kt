@@ -11,5 +11,4 @@ interface PetRepository {
     suspend fun getPetById(petId: String): Pet?
     suspend fun getPetsByUserIdAndState(userId: String, state: PetState): List<Pet>
     fun getPetsForUser(userId: String): Flow<List<Pet>>
-    suspend fun getPetsPendingDownload(): List<Pet>
 }

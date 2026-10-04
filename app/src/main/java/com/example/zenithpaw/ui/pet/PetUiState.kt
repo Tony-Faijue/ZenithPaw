@@ -8,7 +8,7 @@ data class PetUiState(
     val petId: String = "",
     val name: String = "",
     val species: PetType = PetType.CAT,
-    val animationUrl: String = "",
+    val animation: Int = 0,
     val imageUrl: String = "",
     val zen: Int = 0,
     val petState: PetState = PetState.Idle,
@@ -17,12 +17,14 @@ data class PetUiState(
 
 /**
  * Convert the PetEntity to PetUiState
+ * gets the animation resource ID for the pet entity
  */
 fun Pet.toPetUiState(): PetUiState{
     return PetUiState(
         petId = this.petId,
         name = this.name,
         species = this.species,
+        animation = PetAnimationMapper.getAnimation(this.species, this.petState),
         imageUrl = this.imageUrl,
         zen = this.zen,
         petState = this.petState,

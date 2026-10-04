@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.zenithpaw.roomdatabase.DefaultDispatcher
 import com.example.zenithpaw.roomdatabase.pet.PetRepository
 import com.example.zenithpaw.roomdatabase.pet.PetState
+import com.example.zenithpaw.roomdatabase.pet.PetType
 import com.example.zenithpaw.roomdatabase.shopitem.ShopItemRepository
 import com.example.zenithpaw.roomdatabase.task.TaskRepository
 import com.example.zenithpaw.roomdatabase.user.UserRepository
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
+import com.example.zenithpaw.ui.pet.PetAnimationMapper
 import com.example.zenithpaw.ui.pet.PetScreenUiState
 import com.example.zenithpaw.ui.pet.toEntity
 import com.example.zenithpaw.ui.pet.toPetUiState
@@ -218,10 +220,29 @@ class PetViewModel @Inject constructor(
                  * 3. Check the type of the pet to determine a random number based on the states for each type
                  * 3a. Goal is to play a random animation for the pet that is not idle
                 */
-                // For now make pet jump up and down
-                // --Need check if the assets for pet are already downloaded
-                // --Need to setup the animation Url to reference for the jump animation in Compose UI
-                val updatedPet = pet.copy(petState = PetState.Jump)
+
+                // Check if the pet is already being played with (exit if non-idle state)
+                if (pet.petState != PetState.Idle) {
+                    return@launch
+                }
+
+                var randomNumber: Int = 4 // default idle state
+
+                // Decide on the range for each PetType
+
+                // Check if the petType is Cat
+                if (pet.species == PetType.CAT){
+                    randomNumber = (2..3).random()
+                }
+                // Check if the petType is Rabbit
+                if (pet.species == PetType.RABBIT){
+                    randomNumber = (2..2).random()
+                }
+
+                val randomPetState = PetState.entries[randomNumber]
+
+                // Update the pet state in the database
+                val updatedPet = pet.copy(petState = randomPetState)
                 val updatedEntity = updatedPet.toEntity()
                 // Update the existing pet in the database
                 petRepository.upsertPet(updatedEntity)

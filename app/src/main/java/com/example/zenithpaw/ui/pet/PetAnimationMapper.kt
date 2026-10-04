@@ -7,7 +7,7 @@ import com.example.zenithpaw.roomdatabase.pet.PetType
 /**
  * Class that maps pet states to their corresponding animation resources.
  */
-class PetAnimationMapper {
+object PetAnimationMapper {
     /**
      * Animation map for pet types and their states & animation resources
      */

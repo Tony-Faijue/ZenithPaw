@@ -552,4 +552,98 @@ class PetViewModelUnitTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when onStopPlayingWithPet is clicked, the petState will return to Idle`() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
+
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
+
+        // MutableStateFlow to simulate database changes
+        val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
+
+        // Define the behavior of the suspended functions for database changes
+        every { petRepository.getPetsForUser(any()) } returns petFlow
+
+        // Simulate the database reaction to pet state update
+        coEvery { petRepository.upsertPet(any()) } answers {
+            // changes pet state for the first pet in the list to idle
+            val updatedPet = it.invocation.args[0] as Pet
+            petFlow.value = listOf(updatedPet, myPet2)
+        }
+
+        every { userRepository.getUsers() } returns flowOf(listOf(testUser))
+
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+
+        val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
+        val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
+
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(any()) } returns flowOf(listOf(myInventoryItem1, myInventoryItem2))
+        every { shopItemRepository.getShopItems() } returns flowOf(listOf(shopItem1, shopItem2))
+
+        val viewModel = PetViewModel(
+            petRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+            // initial PetScreenUIState
+            awaitItem()
+
+            // ACT: Select a pet
+            viewModel.onEvent(PetUiEvent.OnPetSelected(myPet1.petId))
+
+            val petSelectionDialogState = awaitItem()
+            assertEquals(true, petSelectionDialogState.isPetSelectionDialogVisible)
+            assertEquals("pet_id_1", petSelectionDialogState.selectedPet?.petId)
+
+            // Act: Play with pet
+            viewModel.onEvent(PetUiEvent.OnPlayWithPetClicked)
+            val petPlayedWithState = awaitItem()
+
+            // Assert not equal to idle state (4) after play with pet
+            assertNotEquals(4, petPlayedWithState.selectedPet?.petState?.ordinal)
+            println("when onPlayWithPetClicked is clicked ... The value of the petState is: ${petPlayedWithState.selectedPet?.petState?.ordinal}")
+
+            // Act: Stop playing with pet
+            viewModel.onEvent(PetUiEvent.OnStopPlayingWithPetClicked)
+            val petStoppedPlayingState = awaitItem()
+
+            // Assert equal to idle state (4) after stop playing with pet
+            assertEquals(4, petStoppedPlayingState.selectedPet?.petState?.ordinal)
+            println("when onStopPlayingWithPet is clicked ... The value of the petState is: ${petStoppedPlayingState.selectedPet?.petState?.ordinal}")
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `when onFeedPetConfirmed is clicked, `() = runTest(testDispatcher){
+       // Logic to test feeding pet
+    }
+
 }

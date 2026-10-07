@@ -19,6 +19,7 @@ data class ShopItem(
     val imageUrl: String,
     val price: Int,
     val description: String,
+    val value: Int,
     @PrimaryKey(autoGenerate = false)
     val shopItemId: String,
     val shopId: String // Foreign key to the Shop entity

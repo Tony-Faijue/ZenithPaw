@@ -8,6 +8,7 @@ data class ShopItemUiState(
     val imageUrl: String = "",
     val price: Int = 0,
     val description: String = "",
+    val value: Int = 0,
     val shopId: String = "",
 )
 
@@ -21,6 +22,7 @@ fun ShopItem.toShopItemUiState(): ShopItemUiState {
         imageUrl = this.imageUrl,
         price = this.price,
         description = this.description,
+        value = this.value,
         shopId = this.shopId,
     )
 }
@@ -35,6 +37,7 @@ fun ShopItemUiState.toEntity(): ShopItem {
         imageUrl = this.imageUrl,
         price = this.price,
         description = this.description,
+        value = this.value,
         shopId = this.shopId,
     )
 }

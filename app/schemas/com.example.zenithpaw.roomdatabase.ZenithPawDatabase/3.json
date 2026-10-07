@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "df43e47ad07499e716f33dcc9e393fa5",
+    "identityHash": "c2c3c635ec752b7c46fe3e2384fadba7",
     "entities": [
       {
         "tableName": "users",
@@ -212,7 +212,7 @@
       },
       {
         "tableName": "shop_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `price` INTEGER NOT NULL, `description` TEXT NOT NULL, `shopItemId` TEXT NOT NULL, `shopId` TEXT NOT NULL, PRIMARY KEY(`shopItemId`), FOREIGN KEY(`shopId`) REFERENCES `shops`(`shopId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `price` INTEGER NOT NULL, `description` TEXT NOT NULL, `value` INTEGER NOT NULL, `shopItemId` TEXT NOT NULL, `shopId` TEXT NOT NULL, PRIMARY KEY(`shopItemId`), FOREIGN KEY(`shopId`) REFERENCES `shops`(`shopId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "name",
@@ -236,6 +236,12 @@
             "fieldPath": "description",
             "columnName": "description",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -337,7 +343,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'df43e47ad07499e716f33dcc9e393fa5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c2c3c635ec752b7c46fe3e2384fadba7')"
     ]
   }
 }

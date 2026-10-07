@@ -238,7 +238,7 @@ class UserViewModelUnitTests {
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 0, "1")
         val testUsers = listOf(testUser)
 
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
         val userInventoryItem = UserInventoryItem("inventory_item_id_1", testUser.userId, shopItem.shopItemId, 3)
         val shopItems = listOf(shopItem)
         val userInventoryItems = listOf(userInventoryItem)

@@ -135,8 +135,8 @@ class PetViewModelUnitTests {
             userId = testUser.userId
         )
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -193,8 +193,8 @@ class PetViewModelUnitTests {
             userId = testUser.userId
         )
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot",25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish",25, "shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -263,8 +263,8 @@ class PetViewModelUnitTests {
             userId = testUser.userId
         )
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot",25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -334,8 +334,8 @@ class PetViewModelUnitTests {
         // MutableStateFlow to simulate database changes
         val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -411,8 +411,8 @@ class PetViewModelUnitTests {
         // MutableStateFlow to simulate database changes
         val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot",25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -512,8 +512,8 @@ class PetViewModelUnitTests {
 
         every { userRepository.getUsers() } returns flowOf(listOf(testUser))
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -592,8 +592,8 @@ class PetViewModelUnitTests {
 
         every { userRepository.getUsers() } returns flowOf(listOf(testUser))
 
-        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", "shop_item_id_1", "shop_id_1")
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"shop_item_id_1", "shop_id_1")
 
         val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
         val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
@@ -642,7 +642,8 @@ class PetViewModelUnitTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `when onFeedPetConfirmed is clicked, `() = runTest(testDispatcher){
+    fun `when onFeedPetConfirmed is clicked, pet zen is increased and petState is set to Eat and then Idle after a time period `() = runTest(testDispatcher){
+
        // Logic to test feeding pet
     }
 

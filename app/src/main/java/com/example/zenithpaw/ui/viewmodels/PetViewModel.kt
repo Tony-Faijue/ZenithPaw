@@ -176,6 +176,10 @@ class PetViewModel @Inject constructor(
             if (inventoryItem.quantity > 0){
                 val newQuantity = inventoryItem.quantity - 1
 
+                // Increase Zen (petHealth)
+                // A way to increase Zen based on the value of the item and petType
+
+
                 // Update the inventory item in the database; when the item quantity is 0, delete the item
                 if (newQuantity <= 0) {
                     // Delete the existing inventory item

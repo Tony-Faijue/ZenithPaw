@@ -99,6 +99,7 @@ class ShopViewModel @Inject constructor(
                                         imageUrl = item.imageUrl,
                                         price = item.price,
                                         description = item.description,
+                                        value = item.value,
                                         shopId = item.shopId,
                                     )
                                 }

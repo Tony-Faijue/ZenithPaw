@@ -56,8 +56,8 @@ class ShopViewModelUnitTests {
     fun `when user repository is empty, the UI state updates errorMessage to 'No user found'`() = runTest(testDispatcher) {
         // Arrange
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 30,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         every { userRepository.getUsers() } returns flowOf(emptyList())
@@ -101,8 +101,8 @@ class ShopViewModelUnitTests {
         // Arrange
         val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         every { userRepository.getUsers() } returns flowOf(listOf(testUser))
@@ -175,8 +175,8 @@ class ShopViewModelUnitTests {
     fun `when buying a shop item and the user repository is empty, the UI state updates errorMessage to 'No User Found When Buying ShopItemName'`() = runTest(testDispatcher){
         // Arrange
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         every { userRepository.getUsers() } returns flowOf(emptyList())
@@ -252,8 +252,8 @@ class ShopViewModelUnitTests {
         coEvery { userInventoryItemRepository.insertUserInventoryItem(any()) } returns Unit
 
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
 
@@ -319,8 +319,8 @@ class ShopViewModelUnitTests {
         val userFlow = MutableStateFlow(listOf(testUser))
 
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         val myItem = UserInventoryItem("user_item_id_1",testUser.userId, shopItem.shopItemId, 1)
@@ -410,8 +410,8 @@ class ShopViewModelUnitTests {
         } returns null
 
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 100, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 100, "Carrot",25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         every { shopRepository.getShops() } returns flowOf(listOf(shop))
@@ -470,8 +470,8 @@ class ShopViewModelUnitTests {
         val userFlow = flowOf(listOf(testUser))
 
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         every { userRepository.getUsers() } returns userFlow
@@ -524,8 +524,8 @@ class ShopViewModelUnitTests {
         val userFlow = flowOf(listOf(testUser))
 
         val shop = Shop("shop_id_1", "shop_name_1")
-        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", "shop_item_id_1", "shop_id_1")
-        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", "shop_item_id_2", "shop_id_1")
+        val shopItem = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25, "shop_item_id_1", "shop_id_1")
+        val shopItem2 = ShopItem("Apple", "apple.png", 5, "Apple", 25,"shop_item_id_2", "shop_id_1")
         val shopItems = listOf(shopItem, shopItem2)
 
         every { userRepository.getUsers() } returns userFlow

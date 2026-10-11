@@ -12,6 +12,7 @@ import com.example.zenithpaw.roomdatabase.user.UserRepository
 import com.example.zenithpaw.roomdatabase.userinventoryitem.UserInventoryItemRepository
 import com.example.zenithpaw.ui.pet.PetAnimationMapper
 import com.example.zenithpaw.ui.pet.PetScreenUiState
+import com.example.zenithpaw.ui.pet.PetZenItemConsumptionLogic
 import com.example.zenithpaw.ui.pet.toEntity
 import com.example.zenithpaw.ui.pet.toPetUiState
 import com.example.zenithpaw.ui.uievents.PetUiEvent
@@ -177,8 +178,14 @@ class PetViewModel @Inject constructor(
                 val newQuantity = inventoryItem.quantity - 1
 
                 // Increase Zen (petHealth)
-                // A way to increase Zen based on the value of the item and petType
 
+                // Get the shopItemId from the inventoryItem
+                val shopItem = shopItemRepository.getShopItemById(inventoryItem.shopItemId)
+                // Get the pet from the petRepository
+                val pet = petRepository.getPetById(selectedPet.petId) ?: return@launch
+
+                // Final value of Pet Zen
+                val finalPetZen = PetZenItemConsumptionLogic.consumeItemForZen(shopItem, pet)
 
                 // Update the inventory item in the database; when the item quantity is 0, delete the item
                 if (newQuantity <= 0) {
@@ -195,8 +202,8 @@ class PetViewModel @Inject constructor(
                 // Need to setup animation url to reference once the pet state changes in ComposeUI
                 val petUpdating = petRepository.getPetById(selectedPet.petId)
                 petUpdating?.let {
-                    // Update the pet state to eating
-                    petRepository.upsertPet(it.copy(petState = PetState.Eat))
+                    // Update the pet state to eating and pet zen to the final value
+                    petRepository.upsertPet(it.copy(petState = PetState.Eat, zen = finalPetZen))
                 }
                 _uiState.update { it.copy(isItemSelectionDialogVisible = false)}
 

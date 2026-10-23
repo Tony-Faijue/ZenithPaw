@@ -642,9 +642,117 @@ class PetViewModelUnitTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `when onFeedPetConfirmed is clicked, pet zen is increased and petState is set to Eat and then Idle after a time period `() = runTest(testDispatcher){
+    fun `when onFeedPetConfirmed is clicked on success, pet zen is increased and petState is set to Eat and then Idle after a time period `() = runTest(testDispatcher){
+        // Arrange
+        val testUser = User("JohnDoe", "johndoe@example.com", "imageurl.com", 500L, 50, "1")
 
-       // Logic to test feeding pet
+        val myPet1 = Pet(
+            "Rover",
+            PetType.CAT,
+            imageUrl = "image_url_1",
+            zen = 100,
+            petState = PetState.Idle,
+            petId = "pet_id_1",
+            userId = testUser.userId
+        )
+        val myPet2 = Pet(
+            "Buddy",
+            PetType.RABBIT,
+            imageUrl = "image_url_2",
+            zen = 80,
+            petState = PetState.Idle,
+            petId = "pet_id_2",
+            userId = testUser.userId
+        )
+
+        // MutableStateFlow to simulate database changes
+        val petFlow = MutableStateFlow(listOf(myPet1, myPet2))
+
+        // Define the behavior of the suspended functions for database changes
+        every { petRepository.getPetsForUser(any()) } returns petFlow
+        // Simulate the database reaction to pet state update
+        coEvery { petRepository.upsertPet(any()) } answers {
+            // changes pet state for the first pet in the list to idle
+            val updatedPet = it.invocation.args[0] as Pet
+            petFlow.value = listOf(updatedPet, myPet2)
+        }
+
+        every { userRepository.getUsers() } returns flowOf(listOf(testUser))
+
+        val shopItem1 = ShopItem("Carrot", "carrot.png", 10, "Carrot", 25,"fish_shop_item_1", "shop_id_1")
+        val shopItem2 = ShopItem("Fish", "fish.png", 10, "Fish", 25,"carrot_shop_item_2", "shop_id_1")
+
+        val myInventoryItem1 = UserInventoryItem("user_item_1", testUser.userId, shopItem1.shopItemId, 3)
+        val myInventoryItem2 = UserInventoryItem("user_item_2", testUser.userId, shopItem2.shopItemId, 1)
+
+        // MutableStateFlow to simulate database changes
+        val userInventoryItemFlow = MutableStateFlow(listOf(myInventoryItem1, myInventoryItem2))
+
+        every { userInventoryItemRepository.getUserInventoryItemsByUserId(any()) } returns userInventoryItemFlow
+
+        every { shopItemRepository.getShopItems() } returns flowOf(listOf(shopItem1, shopItem2))
+
+        // Define the behavior of the suspended functions for database changes
+        coEvery { shopItemRepository.getShopItemById("fish_shop_item_1") } returns shopItem1
+
+        coEvery { userInventoryItemRepository.getUserInventoryItemById("user_item_1") } returns myInventoryItem1
+        coEvery { userInventoryItemRepository.upsertUserInventoryItem(any())} answers {
+            val updatedUserInventoryItem = it.invocation.args[0] as UserInventoryItem
+            userInventoryItemFlow.value = listOf(updatedUserInventoryItem, myInventoryItem2)
+        }
+
+        coEvery { petRepository.getPetById("pet_id_1") } returns myPet1
+
+        val viewModel = PetViewModel(
+            petRepository,
+            shopItemRepository,
+            userRepository,
+            userInventoryItemRepository,
+            testDispatcher
+        )
+
+        viewModel.uiState.test {
+            // initial state
+            awaitItem()
+            // initial PetScreenUIState
+            awaitItem()
+
+            // ACT: Select a pet
+            viewModel.onEvent(PetUiEvent.OnPetSelected(myPet1.petId))
+
+            val petSelectionDialogState = awaitItem()
+            assertEquals(true, petSelectionDialogState.isPetSelectionDialogVisible)
+            assertEquals("pet_id_1", petSelectionDialogState.selectedPet?.petId)
+
+            // ACT: Select an inventory item
+            viewModel.onEvent(PetUiEvent.OnInventoryItemSelected(myInventoryItem1.inventoryItemId))
+
+            // selected item is updated
+            awaitItem()
+
+            // item selection dialog visible state
+            val inventoryItemSelectionDialogState = awaitItem()
+            assertEquals(true,inventoryItemSelectionDialogState.isItemSelectionDialogVisible)
+            assertEquals("user_item_1", inventoryItemSelectionDialogState.selectedItem?.inventoryItemId)
+
+            // ACT: Feed pet
+            viewModel.onEvent(PetUiEvent.OnFeedPetConfirmed)
+
+            // 1.  Consume the combined states before delay()
+            val stateUpdatedSelectedItemQuantity = awaitItem()
+            // Updated inventory item quantity
+            assertEquals(2, stateUpdatedSelectedItemQuantity.selectedItem?.quantity)
+            // update quantity in database
+            awaitItem()
+            // Updated pet state and zen
+            val stateUpdatedPetStateAndZen = awaitItem()
+            // updated pet state and pet zen
+            assertEquals(PetState.Eat, stateUpdatedPetStateAndZen.selectedPet?.petState)
+            assertEquals(200, stateUpdatedPetStateAndZen.selectedPet?.zen)
+            // Updated item selection dialog
+            val stateItemSelectionDialog = awaitItem()
+            assertEquals(false, stateItemSelectionDialog.isItemSelectionDialogVisible)
+        }
     }
 
 }

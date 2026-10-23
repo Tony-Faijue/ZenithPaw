@@ -195,6 +195,11 @@ class PetViewModel @Inject constructor(
                 } else {
                     // Update the inventory item with the new decreased quantity
                     val updatedInventoryItem = inventoryItem.copy(quantity = newQuantity)
+
+                    // Update the selected item in the ui state
+                    val updatedSelectedItem = selectedItem.copy(quantity = newQuantity)
+                    _uiState.update {it.copy(selectedItem = updatedSelectedItem)}
+
                     userInventoryItemRepository.upsertUserInventoryItem(updatedInventoryItem)
                 }
 

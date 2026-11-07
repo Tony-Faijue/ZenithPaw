@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.zenithpaw.R
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicBackgroundLayout
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicCard
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppIconButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppTextField
@@ -119,6 +120,27 @@ fun AppBasicBackgroundLayoutPreview() {
                 }
             },
             modifier = Modifier.size(width = 300.dp, height = 300.dp),
+            shadowOffset = 10.dp,
+            borderWidth = 2.2.dp
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "AppBasicCard Preview")
+@Composable
+fun AppBasicCardPreview() {
+    ZenithPawTheme {
+        AppBasicCard(
+            content = {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Text("App Basic Card")
+                }
+            },
+            modifier = Modifier.size(width = 200.dp, height = 100.dp),
             shadowOffset = 10.dp,
             borderWidth = 2.2.dp
         )

@@ -3,7 +3,7 @@ package com.example.zenithpaw.ui.shopitem
 import com.example.zenithpaw.R
 
 /**
- * Class that maps shop item names(keys) to their corresponding image resources(values).
+ * Class that maps shop item ids(keys) to their corresponding image resources(values).
  */
 object ShopItemResourceMapper{
     private val shopItemResourceMap: Map<String, Int> = mapOf(
@@ -21,9 +21,9 @@ object ShopItemResourceMapper{
     )
 
     /**
-     * Get the resource ID for a given shop item name.
+     * Get the resource ID for a given shop item id.
      */
-    fun getResourceId(name: String): Int {
-        return shopItemResourceMap[name] ?: R.drawable.blue_charm
+    fun getResourceId(id: String): Int {
+        return shopItemResourceMap[id] ?: R.drawable.blue_charm
     }
 }

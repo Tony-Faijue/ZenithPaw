@@ -12,13 +12,24 @@ object PetZenItemConsumptionLogic {
     private fun checkItemWithFavorablePetType(petType: PetType, shopItem: ShopItem): Boolean{
         when (petType){
             PetType.CAT -> {
-                if (shopItem.shopItemId == "fish_shop_item_1"){
+                if (shopItem.shopItemId == "fish_shop_item_1" ||
+                    shopItem.shopItemId == "cod"||
+                    shopItem.shopItemId == "koi" ||
+                    shopItem.shopItemId == "tilapia" ||
+                    shopItem.shopItemId == "tuna" ||
+                    shopItem.shopItemId == "blue_charm" ||
+                    shopItem.shopItemId == "brown_charm"){
                     return true
                 }
                 return false
             }
             PetType.RABBIT -> {
-                if (shopItem.shopItemId == "carrot_shop_item_2"){
+                if (shopItem.shopItemId == "carrot_shop_item_2" ||
+                    shopItem.shopItemId == "broccoli" ||
+                    shopItem.shopItemId == "carrot" ||
+                    shopItem.shopItemId == "strawberry" ||
+                    shopItem.shopItemId == "green_charm" ||
+                    shopItem.shopItemId == "pink_charm"){
                     return true
                 }
                 return false

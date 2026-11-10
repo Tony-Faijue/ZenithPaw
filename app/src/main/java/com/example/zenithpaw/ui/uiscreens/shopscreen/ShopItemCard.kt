@@ -6,7 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +23,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.TextStyle
@@ -29,11 +33,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.zenithpaw.R
 import com.example.zenithpaw.ui.shopitem.ShopItemResourceMapper
 import com.example.zenithpaw.ui.shopitem.ShopItemUiState
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uievents.ShopUiEvent
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicCard
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppIconButton
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppImageButton
+
 /**
  * Composable for the Shop Item Card
  */
@@ -48,10 +56,16 @@ fun ShopItemCard(
     shadowOffset: Dp = 8.dp,
     borderWidth: Dp = 2.2.dp,
     shape: Shape = RectangleShape,
+    stroke: Stroke = Stroke(width = 10f),
     textStyle: TextStyle = TextStyle(
         fontFamily = FontFamily.Monospace,
         fontWeight = FontWeight.Bold,
-        fontSize = 28.sp),
+        fontSize = 20.sp),
+    buttonTextStyle: TextStyle = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.Bold,
+        fontSize = 8.sp
+    )
 ){
     AppBasicCard(
         modifier = modifier,
@@ -75,26 +89,22 @@ fun ShopItemCard(
                 Image(
                     bitmap = ImageBitmap.imageResource(ShopItemResourceMapper.getResourceId(state.shopItemId)),
                     contentDescription = state.description,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.size(width = 50.dp, height = 50.dp),
                     filterQuality = FilterQuality.None,
                 )
-                // Item Purchase Button with Price
+                Spacer(modifier = Modifier.height(4.dp))
+
+                AppImageButton(
+                    onClick = onClick,
+                    text = "${state.price}",
+                    textStyle = buttonTextStyle,
+                    imageId = R.drawable.coin_sprite, imageHeight = 25.dp, imageWidth = 25.dp,
+                    stroke = stroke,
+                    modifier = Modifier.size(width = 80.dp, height = 50.dp),
+                    backgroundColor = MaterialTheme.colorScheme.primary,
+                )
             }
         }
     )
-}
-
-@Preview(showBackground = true, name = "ShopItemCard Preview")
-@Composable
-fun ShopItemCardPreview() {
-    val state = ShopItemUiState("carrot", "Carrot", "", 10, "A carrot with vitamin c", 20, "shop_id_1")
-    ZenithPawTheme {
-        ShopItemCard(
-            state,
-            {},
-            {},
-            modifier = Modifier.size(width = 250.dp, height = 150.dp),
-        )
-    }
 }
 

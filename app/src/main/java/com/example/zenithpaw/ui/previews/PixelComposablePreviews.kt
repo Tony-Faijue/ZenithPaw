@@ -20,13 +20,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.zenithpaw.R
+import com.example.zenithpaw.ui.shopitem.ShopItemUiState
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicBackgroundLayout
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicCard
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppIconButton
+import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppImageButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppTextField
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppToggleButton
+import com.example.zenithpaw.ui.uiscreens.shopscreen.ShopItemCard
 import zahid.neobrutal.buttons.NeoButton
 import zahid.neobrutal.cards.NeoBasicCard
 import zahid.neobrutal.inputs.NeoTextField
@@ -143,6 +146,40 @@ fun AppBasicCardPreview() {
             modifier = Modifier.size(width = 200.dp, height = 100.dp),
             shadowOffset = 10.dp,
             borderWidth = 2.2.dp
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "AppImageButton Preview")
+@Composable
+fun AppImageButtonPreview(){
+    val myTextStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)
+    val myStroke = Stroke(width = 10f)
+    // dynamic color false use custom theme instead of dynamic theme
+    ZenithPawTheme (dynamicColor = false){
+        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
+            AppImageButton(
+                text = "App Icon Button", onClick = {}, shadowColor = Color.Black, shadowOffset = 12.dp,
+                imageId = R.drawable.coin_sprite, imageHeight = 35.dp, imageWidth = 35.dp,
+                spacerWidth = 16.dp, stroke = myStroke, textStyle = myTextStyle,
+                modifier = Modifier.size(width = 250.dp, height = 100.dp))
+        }
+    }
+}
+
+/**
+ * Simple Preview for ShopItemCard
+ */
+@Preview(showBackground = true, name = "ShopItemCard Preview")
+@Composable
+fun ShopItemCardPreview() {
+    val state = ShopItemUiState("carrot", "Carrot", "", 10, "A carrot with vitamin c", 20, "shop_id_1")
+    ZenithPawTheme {
+        ShopItemCard(
+            state,
+            {},
+            {},
+            modifier = Modifier.size(width = 250.dp, height = 150.dp),
         )
     }
 }

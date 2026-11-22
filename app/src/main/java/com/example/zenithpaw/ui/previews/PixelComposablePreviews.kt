@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.zenithpaw.R
+import com.example.zenithpaw.ui.shop.ShopUiState
 import com.example.zenithpaw.ui.shopitem.ShopItemUiState
 import com.example.zenithpaw.ui.theme.ZenithPawTheme
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppBasicBackgroundLayout
@@ -30,6 +31,7 @@ import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppImageButton
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppTextField
 import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppToggleButton
 import com.example.zenithpaw.ui.uiscreens.shopscreen.ShopItemCard
+import com.example.zenithpaw.ui.uiscreens.shopscreen.ShopItemGallery
 import zahid.neobrutal.buttons.NeoButton
 import zahid.neobrutal.cards.NeoBasicCard
 import zahid.neobrutal.inputs.NeoTextField
@@ -177,9 +179,32 @@ fun ShopItemCardPreview() {
     ZenithPawTheme {
         ShopItemCard(
             state,
-            {},
-            {},
+            onClick = {},
+            isPreviewVisible = false,
             modifier = Modifier.size(width = 250.dp, height = 150.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ShopItemGallery Preview")
+@Composable
+fun ShopItemGalleryPreview(){
+
+    val shopItems: List<ShopItemUiState> = listOf(
+        ShopItemUiState("carrot", "Carrot", "", 10, "A carrot", 20, "shop_id_1"),
+        ShopItemUiState("broccoli", "Broccoli", "", 10, "A broccoli", 20, "shop_id_1"),
+        ShopItemUiState("strawberry", "Strawberry", "", 10, "A strawberry", 20, "shop_id_1"),
+    )
+
+    val state = ShopUiState(
+        shopId = "shop_id_1",
+        name = "Food Shop",
+        availableItems = shopItems
+    )
+    ZenithPawTheme {
+        ShopItemGallery(
+            uiState = state,
+            modifier = Modifier.size(width = 400.dp, height = 200.dp),
         )
     }
 }

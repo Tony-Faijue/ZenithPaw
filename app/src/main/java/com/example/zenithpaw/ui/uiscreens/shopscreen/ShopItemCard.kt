@@ -3,6 +3,7 @@ package com.example.zenithpaw.ui.uiscreens.shopscreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,13 +49,17 @@ import com.example.zenithpaw.ui.uiscreens.pixelcomposables.AppImageButton
 @Composable
 fun ShopItemCard(
     state: ShopItemUiState,
-    onEvent: (ShopUiEvent) -> Unit,
+    isPreviewVisible: Boolean,
     onClick: () -> Unit,
     modifier: Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     shadowColor: Color = Color.Black,
     shadowOffset: Dp = 8.dp,
     borderWidth: Dp = 2.2.dp,
+    imageWidth: Dp = 50.dp,
+    imageHeight: Dp = 50.dp,
+    imageButtonWidth: Dp = 80.dp,
+    imageButtonHeight: Dp = 50.dp,
     shape: Shape = RectangleShape,
     stroke: Stroke = Stroke(width = 10f),
     textStyle: TextStyle = TextStyle(
@@ -79,7 +84,13 @@ fun ShopItemCard(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
+                    .clickable{
+                        // On Click Trigger Event for preview item
+                        ShopUiEvent.OnPreviewItemClicked(state.shopItemId)
+                    }
             ){
+                // can include ui changes based on preview state e.g. if(isPreviewVisible) ... show highlighted border
+
                 // Item Title
                 Text(
                     text = state.name,
@@ -89,7 +100,7 @@ fun ShopItemCard(
                 Image(
                     bitmap = ImageBitmap.imageResource(ShopItemResourceMapper.getResourceId(state.shopItemId)),
                     contentDescription = state.description,
-                    modifier = Modifier.size(width = 50.dp, height = 50.dp),
+                    modifier = Modifier.size(width = imageWidth, height = imageHeight),
                     filterQuality = FilterQuality.None,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -100,8 +111,9 @@ fun ShopItemCard(
                     textStyle = buttonTextStyle,
                     imageId = R.drawable.coin_sprite, imageHeight = 25.dp, imageWidth = 25.dp,
                     stroke = stroke,
-                    modifier = Modifier.size(width = 80.dp, height = 50.dp),
+                    modifier = Modifier.size(width = imageButtonWidth, height = imageButtonHeight),
                     backgroundColor = MaterialTheme.colorScheme.primary,
+                    horizontalArrangement = Arrangement.Center
                 )
             }
         }
